@@ -1,5 +1,7 @@
 #include "File_utils.h"
 
+/*NOT USED YET*/
+/*given a line number the program jumps to the start of the line*/
 int goToLine(FILE *file, int line_num)
 {
     int Line_Pos = 1;
@@ -27,7 +29,8 @@ int goToLine(FILE *file, int line_num)
     }
     return exit_status; /*exit*/
 }
-
+/*NOT USED YET*/
+/*adds text in given line and in-line offset*/
 int addTextToLine(FILE *file, char *filename, int Line_num, int offset, char *text)
 {
     int exit_status = 1;
@@ -104,23 +107,26 @@ char *getLine(FILE *file)
     char *myString;
     int string_size = 0;
     char current_char = 0;
-    myString = (char *)malloc(1);
+
+    myString = (char *)malloc(1);/*initialize string */
     while (current_char != ENDLINE && current_char != EOF)
     {
-        current_char = getc(file);
-        if (current_char != ENDLINE && current_char != EOF)
+        current_char = getc(file);/*get first char from line*/
+        if (current_char != ENDLINE && current_char != EOF)/*copy chars to string*/
         {
             string_size++;
             myString = (char *)realloc(myString, string_size);
             myString[string_size - 1] = current_char;
         }
     }
-    if (current_char == ENDLINE)
+
+    if (current_char == ENDLINE)/*if reached end of line*/
     {
         string_size++;
         myString = (char *)realloc(myString, string_size);
         myString[string_size - 1] = current_char;
     }
+
     if (current_char == EOF)
     {
         if (string_size < 2)
@@ -133,13 +139,14 @@ char *getLine(FILE *file)
             fseek(file, -1, SEEK_CUR);
         }
     }
+    /*add \0 in the end of string*/
     string_size++;
     myString = (char *)realloc(myString, string_size);
     myString[string_size - 1] = END_OF_STRING;
     return myString;
 }
 
-
+/*get word from file line*/
 char *getWord(FILE *file)
 {
     char *new_string;

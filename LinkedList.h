@@ -16,7 +16,7 @@ typedef struct node
 void insertnewnode(node *list, char *key, void *data);
 void insertnode(node *list, node *newnode);
 node *createNode(char *key, void *data);
-node *find(node *list, char *keyToFind);
+node *findNode(node *list, char *keyToFind);
 /*The use of the delete functions function is only allowed if the data field hold only non-pointer fields*/
 /*for lists that have data that hold pointer fields, implement your own delete function to free all memory*/
 node *deleteNode(node *list, char *);

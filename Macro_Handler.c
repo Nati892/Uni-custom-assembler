@@ -1,20 +1,24 @@
 #include "Macro_Handler.h"
 
+/* - assumptions - 
+the macros are well defined, no error check is needed.
+a macro call cannot have a label before it!*/
+
 void macroStage(FILE *file, char *file_name)
 {
     node *LL;
     FILE *am_file;
     LL = createNode(NULL, NULL);
     fseek(file, 0, SEEK_SET); /*make sure the file stream is at the start*/
-    collectMacros(file, LL);
-    am_file = createMacroFile(file_name);
-    if (am_file != NULL)
+    collectMacros(file, LL);/*search and save macros from source file*/
+    am_file = createMacroFile(file_name);/*create .am file*/
+    if (am_file != NULL)/*if .am file created successfully */
     {
-        fseek(file, 0, SEEK_SET);
+        fseek(file, 0, SEEK_SET);/*set both files to the beginning*/
         fseek(am_file, 0, SEEK_SET);
-        spreadMacros(file, am_file, LL);
+        spreadMacros(file, am_file, LL);/*copy the file contents to .am file and spread the macros*/
         fclose(am_file);
-        killList(LL);
+        killList(LL);/*free the list*/
     }
 }
 
@@ -23,7 +27,7 @@ void collectMacros(FILE *file, node *LL)
 {
     char *line, *macro_key, *macro_body, *temp, *word;
     fseek(file, 0, SEEK_SET);
-    line = getLine(file);
+    line = getLine(file);/*get first line*/
 
     if (line == NULL) /*empty file*/
         return;
@@ -57,16 +61,17 @@ void collectMacros(FILE *file, node *LL)
                         macro_body = line;
                     }
                     else
-                    {
+                    {/*appends line to macro body*/
                         temp = appendString(macro_body, line);
                         free(macro_body);
                         macro_body = temp;
                         free(line);
                     }
+                    /*iterate, get nect line*/
                     line = getLine(file);
                     temp = (trimAll(line));
                 }
-                storeMacro(LL, macro_key, macro_body);
+                storeMacro(LL, macro_key, macro_body);/*if finished collecting the current macro then save it*/
             }
         }
         free(line);
@@ -74,12 +79,13 @@ void collectMacros(FILE *file, node *LL)
     }
   
 }
-
+/*checks if text has the "macro" word at the start of it*/
 int isMacroStart(char *text)
 {
     int result = 0;
     char *temp = NULL;
     temp = trimAll(text);
+
     if (temp != NULL)
     {
         if (!strcmp(temp, MACRO_START))
@@ -89,6 +95,7 @@ int isMacroStart(char *text)
     return result;
 }
 
+/*checks if text has the "endm" word at the start of it*/
 int isMacroEnd(char *text)
 {
     int result = 0;
@@ -103,6 +110,7 @@ int isMacroEnd(char *text)
     return result;
 }
 
+/*this function spreads the text and macros from the src file to dst file*/
 void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
 {
     char *current_line, *word = NULL, *temp = NULL;
@@ -115,16 +123,16 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
         {
             fprintf(dest_file, "%s", current_line);
         }
-        else
+        else/*if not comment line*/
         {
-            temp = getWordFromLine(current_line);
+            temp = getWordFromLine(current_line);/*get word and check if its a macro*/
             word = trimAll(temp);
             free(temp);
 
-            if (!compareStrings(word, MACRO_START)) /*skip macro declarations*/
+            if (!compareStrings(word, MACRO_START)) /*this part skips the macro declarations*/
             {
                 free(word);
-
+                /*get line and first word from line*/
                 free(current_line);
                 current_line = NULL;
                 current_line = getLine(src_file);
@@ -145,20 +153,20 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
                 if (word != NULL)
                     free(word);
             }
-            else /*check for macro name appearance*/
+            else /*check for macro name appearance - macro calls*/
             {
                 temp = getWordFromLine(current_line);
                 word = trimAll(temp);
                 free(temp);
-                curr_macro = searchMacro(LL, word);
+                curr_macro = findNode(LL, word);
 
-                if (curr_macro != NULL)
+                if (curr_macro != NULL)/*if it is a macro call then print the macro bodo into the dest file*/
                 {
                     if (curr_macro->data != NULL)
                         fprintf(dest_file, "%s", (char *)curr_macro->data);
                 }
 
-                else
+                else/*incase its just a regulat line the copy it*/
                 {
                     fprintf(dest_file, "%s", current_line);
                 }
@@ -174,25 +182,7 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
    
 }
 
-int ReachedEOF(char *txt)
-{
-
-    int i = 0, result = 1;
-    if (txt == NULL)
-        return 1;
-    if (txt[i] == END_OF_STRING)
-        result = 0;
-    while (txt[i] != END_OF_STRING)
-    {
-        if ((!isspace(txt[i])) && (txt[i] != EOF))
-        {
-            result = 0;
-        }
-        i++;
-    }
-    return result;
-}
-
+/*copy substing to a given file*/
 void copySubstringToFile(FILE *dest_file, char *mystring, int start, int length)
 {
     int i;
@@ -202,6 +192,8 @@ void copySubstringToFile(FILE *dest_file, char *mystring, int start, int length)
     }
 }
 
+
+/*checks if given line is a comment line*/
 int isCommentLine(char *line)
 {
     int result = 0;
@@ -217,18 +209,21 @@ int isCommentLine(char *line)
     return result;
 }
 
+/*creates the macro '.am' file */
 FILE *createMacroFile(char *file_name)
 {
     char *am_file_name;
     FILE *am_file = NULL;
+
     am_file_name = (char *)malloc((strlen(file_name) + 4) * sizeof(char)); /*Create .am file name*/
-    memcpy(am_file_name, file_name, strlen(file_name));
+    memcpy(am_file_name, file_name, strlen(file_name));/*copy .am ending*/
     memcpy(am_file_name + strlen(file_name), &AM_FILE_NAME_ENDING, 4);
-    am_file = fopen(am_file_name, "w+");
+    am_file = fopen(am_file_name, "w+");/*create the file*/
    
     return am_file;
 }
 
+/*stors a macro*/
 void storeMacro(node *LL, char *macro_name, char *macro_body)
 {
     if (LL->key == NULL) /*for the first macro*/
@@ -242,38 +237,3 @@ void storeMacro(node *LL, char *macro_name, char *macro_body)
     }
 }
 
-void printMacro(FILE *output_file, node *macro)
-{
-    if (macro != NULL)
-    {
-        if (macro->data != NULL)
-        {
-            fprintf(output_file, "%s", (char *)macro->data);
-        }
-    }
-}
-
-node *searchMacro(node *LL, char *key)
-{
-    if (key == NULL)
-        return NULL;
-    while (LL != NULL)
-    {
-        if (LL->key != NULL)
-        {
-            if (!strcmp(LL->key, key))
-            {
-                return LL;
-            }
-            else
-            {
-                LL = LL->next;
-            }
-        }
-        else
-        {
-            LL = NULL;
-        }
-    }
-    return NULL;
-}
