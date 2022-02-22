@@ -7,7 +7,6 @@ void macroStage(FILE *file, char *file_name)
     LL = createNode(NULL, NULL);
     fseek(file, 0, SEEK_SET); /*make sure the file stream is at the start*/
     collectMacros(file, LL);
-    printAllMacros(LL);
     am_file = createMacroFile(file_name);
     if (am_file != NULL)
     {
@@ -17,34 +16,11 @@ void macroStage(FILE *file, char *file_name)
         fclose(am_file);
         killList(LL);
     }
-    printf("FINISHED\n"); /*DEBUG*/
 }
 
-void PrintLines(FILE *file) /*DEBUG*/
-{
-    int i = 0, j;
-    char *line = NULL;
-    line = getLine(file);
-    while (line != NULL)
-    {
-        for (i = 0; i < 100000000 * 7 / 8; i++)
-        {
-            /* code */
-        }
-
-        printf("current->%s<-  ->", line);
-        for (j = 0; j < strlen(line); j++)
-        {
-            printf("%d,", line[j]);
-        }
-        free(line);
-        line = getLine(file);
-    }
-}
 
 void collectMacros(FILE *file, node *LL)
 {
-    int i;
     char *line, *macro_key, *macro_body, *temp, *word;
     fseek(file, 0, SEEK_SET);
     line = getLine(file);
@@ -62,7 +38,7 @@ void collectMacros(FILE *file, node *LL)
                 if (word != NULL)
                     free(word);
                 macro_body = NULL;
-                printf("detected macro\n");
+              
                 line = extractWordFromStart(line);
 
                 temp = getWordFromLine(line); /*store macro name*/
@@ -96,7 +72,7 @@ void collectMacros(FILE *file, node *LL)
         free(line);
         line = getLine(file);
     }
-    printf("finished collecting macros\n");
+  
 }
 
 int isMacroStart(char *text)
@@ -131,7 +107,7 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
 {
     char *current_line, *word = NULL, *temp = NULL;
     node *curr_macro = NULL;
-    printf("********STARTED SPREADING MACROS***********\n");
+ 
     current_line = getLine(src_file);
     while (current_line != NULL)
     {
@@ -179,7 +155,7 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
                 if (curr_macro != NULL)
                 {
                     if (curr_macro->data != NULL)
-                        fprintf(dest_file, "%s", curr_macro->data);
+                        fprintf(dest_file, "%s", (char *)curr_macro->data);
                 }
 
                 else
@@ -195,7 +171,7 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
 
         current_line = getLine(src_file);
     }
-    printf("*****FINISHED SPREADNING MACROS*****\n");
+   
 }
 
 int ReachedEOF(char *txt)
@@ -249,14 +225,7 @@ FILE *createMacroFile(char *file_name)
     memcpy(am_file_name, file_name, strlen(file_name));
     memcpy(am_file_name + strlen(file_name), &AM_FILE_NAME_ENDING, 4);
     am_file = fopen(am_file_name, "w+");
-    if (am_file != NULL)
-    {
-        printf("successfully created file-->%s<--\n", am_file_name);
-    }
-    else
-    {
-        printf("Failed in creating file-->%s<--\n", am_file_name);
-    }
+   
     return am_file;
 }
 
@@ -307,16 +276,4 @@ node *searchMacro(node *LL, char *key)
         }
     }
     return NULL;
-}
-
-void printAllMacros(node *LL) /*DEBUG*/
-{
-    while (LL != NULL)
-    {
-        if (LL->key != NULL)
-        {
-            printf("Macro key-->%s\nMacro Body-->\n%s<--END BODY\n", LL->key, (char *)LL->data);
-        }
-        LL = LL->next;
-    }
 }

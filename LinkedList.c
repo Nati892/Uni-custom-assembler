@@ -8,7 +8,7 @@ while (list->next!=NULL)
 }
 list->next=newnode;
 
-
+ 
 }
 
 void insertnewnode(node *list, char *key, void *data)

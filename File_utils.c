@@ -195,7 +195,7 @@ char *appendString(char *s1, char *s2)
 {
     int s1_size, s2_size, i, j;
     char *new_string;
-    printf("starting appendString with ->%s<- and ->%s<-\n", s1, s2);
+    
     if (s1 == NULL && s2 == NULL)
     {
         return NULL;
