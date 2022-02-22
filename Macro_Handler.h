@@ -3,6 +3,7 @@
 
 #include "LinkedList.h"
 #include "File_utils.h"
+#include "Text_parse.h"
 void macroStage(FILE *file, char *file_name);/*start of acro stage*/
 FILE *createMacroFile(char *file_name);
 void collectMacros(FILE *file, node *LL);/*collect all macros and store them in giver linked List*/
