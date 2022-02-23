@@ -16,8 +16,6 @@ void copySubstringToFile(FILE *dest_file, char *mystring, int start, int length)
 int isMacroStart(char *text);/*checks if word is macro start*/
 int isMacroEnd(char *text);/*checks if word is macro end*/
 
-
-
 #define MACRO_START "macro"
 #define MACRO_END "endm"
 #define MACRO_END_LENGTH 5
