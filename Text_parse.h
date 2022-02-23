@@ -16,8 +16,20 @@ char *extractWordFromStart(char *Line); /*removes the first word from line and r
 void appendEndLineChar(char *line);/*appends \n to given string*/
 int compareStrings(char *a, char *b);/*compares two strings*/
 
+int countCommas(char *);/*counts the commas at the start of string*/
+void removeComma(char *);/*removes first comma in the start of string*/
+int checkResidualText(char *);/*1 for no resdiual text, 0 for more text*/
+int isLastEOF(char*);/*checks if line ends with EOF, 1-true\0-false*/
+int isOnlyWhiteChars(char *);/*checks if line is only full of white chars*/
+int isOnlyEOF(char *);/*checsk if line only holds white chars and EOF*/
+int isWhiteChar(char);/*checks if char is white space except for \n*/
+/*int isLabel(char *);TODO in different file*/
 
+
+/*update in file utils also*/
 #ifndef parsing_macros
+#define COMMA_CHAR ','
+
 #define ENDLINE '\n'
 #define END_OF_STRING '\0'
 #define COMMENT_START ';'
