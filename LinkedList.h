@@ -22,6 +22,5 @@ node *findNode(node *list, char *keyToFind);
 node *deleteNode(node *list, char *);
 void killList(node *list);
  
-
-
+ 
 #endif

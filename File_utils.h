@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
- 
+
 
 
 /*These functions DO NOT handle opening and closing the given file parameter*/
@@ -15,7 +15,7 @@ char *getLine(FILE *file);              /*returns NULL if line only holds EOF or
 char *getWord(FILE *file);              /*get word including pre-word white chars, returns null for only white chars*/
 
 
-
+/*macro definitions*/
 #define TEMP_FILE_NAME "temp"
 
 #ifndef parsing_macros
@@ -24,6 +24,5 @@ char *getWord(FILE *file);              /*get word including pre-word white char
 #define COMMENT_START ';'
 #define SPACE_CHAR ' '
 #endif
-
 
 #endif
