@@ -22,11 +22,12 @@ int isOnlyWhiteChars(char *);            /*checks if line is only full of white 
 int isOnlyEOF(char *);                   /*checsk if line only holds white chars and EOF*/
 int isWhiteChar(char);                   /*checks if char is white space except for \n*/
 
+
 int isLabelDefinition(char *str);/*checks if it is .extern or a 'label:' definition*/
 int checkLabelName(char *str);/*make sure label name is valid*/
 int checkLabelType(char *str);/*if it is a Data or instruction*/
 int isExternLabel(char *str);/*check if it is an extern label*/
-int isEntryDefinition(char *str);/*check if it is an entr definition*/
+int isEntryDefinition(char *str);/*check if it is an entry definition*/
 
 
 #ifndef parsing_macros

@@ -51,7 +51,7 @@ node *findNode(node *LL, char *key)
             LL = NULL;
         }
     }
-    return NULL;
+    return NULL;/*if list is null returns null*/ 
 }
 
 /*given a key, the function deletes the node if exists in given list, returns the list's head pointer*/
