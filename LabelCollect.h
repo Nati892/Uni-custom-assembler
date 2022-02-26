@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "LinkedList.h"
 #include "Text_parse.h"
+#include "File_utils.h"
 
 enum definition_status
 {
@@ -37,8 +38,8 @@ typedef struct
 
 
 node *collectAllLabels(FILE *src);
-void labelFirstPass(FILE *src, node *label_table);
-void labelSecondPass(FILE *src, node *label_table);
+void collectExternAndNormalLabels(FILE *src, node *label_table);
+void collectEntryLabels(FILE *src, node *label_table);
 int setToEntry(node *label_table, char *label_name);                     /*the function returns error_code as result*/
 int isExtern(node *label_table, char *label_name);                       /**/
 int isEntry(node *label_table, char *label_name);                        /**/
@@ -46,6 +47,18 @@ int isDataLabel(node *label_table, char *label_name);                    /**/
 int isInstructionLabel(node *label_table, char *label_name);             /**/
 node *LabelConstructor(char *label_name, int is_extern, int label_type); /**/
 void storeLable(node *label_table, char *label_name, int is_extern, int label_type);/**/
+
+/*label related parsing functions*/
+int isLabelDefinition(char *str); /*checks if it is a 'label:' definition*/
+int isExternDefinition(char *str);     /*check if it is an extern label*/
+int isEntryDefinition(char *str); /*check if it is an entry definition*/
+int checkLabelName(char *str);    /*make sure label name is valid*/
+int checkLabelType(char *str);    /*if it is a Data or instruction*/
+
+
+/*preserved key words*/
+
+
 #endif
 /*
 create label table with linked list

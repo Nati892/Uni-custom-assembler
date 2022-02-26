@@ -8,7 +8,7 @@ void macroStage(FILE *file, char *file_name)
 {
     node *LL;
     FILE *am_file;
-    LL = createNode(NULL, NULL);
+    LL = initList();
     fseek(file, 0, SEEK_SET); /*make sure the file stream is at the start*/
     collectMacros(file, LL);/*search and save macros from source file*/
     am_file = createMacroFile(file_name);/*create .am file*/
@@ -192,22 +192,6 @@ void copySubstringToFile(FILE *dest_file, char *mystring, int start, int length)
     }
 }
 
-
-/*checks if given line is a comment line*/
-int isCommentLine(char *line)
-{
-    int result = 0;
-    int i = 0;
-    while (isspace(line[i])) /*skip whitespace characters*/
-    {
-        i++;
-    }
-    if (line[i] == COMMENT_START)
-    {
-        result = 1;
-    }
-    return result;
-}
 
 /*creates the macro '.am' file */
 FILE *createMacroFile(char *file_name)

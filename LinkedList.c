@@ -102,3 +102,8 @@ void killList(node *list)
         current=temp;
     }
 }
+
+node *initList()
+{
+return createNode(NULL, NULL);
+}

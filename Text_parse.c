@@ -292,5 +292,71 @@ int isWhiteChar(char c)
         return 0;
 }
 
+/*checks if given line is a comment line*/
+int isCommentLine(char *line)
+{
+    int result = 0;
+    int i = 0;
+    while (isspace(line[i])) /*skip whitespace characters*/
+    {
+        i++;
+    }
+    if (line[i] == COMMENT_START)
+    {
+        result = 1;
+    }
+    return result;
+}
 
+/*checks if string is a preserved word*/
+int isKeyWord(char *str)
+{
+    int i;
+    int result = 0;
+    if (str == NULL)
+        return result;
+    for (i = 0; i < NUM_OF_KEYWORDS; i++) /*check if part of the reserved words */
+    {
+        if (!strcmp(str, keyWordsArr[i]))
+        {
+            result = 1;
+        }
+    }
+    if (result) /*checks if register */
+    {
+        result = !(isRegisterNameInRange(str));
+    }
 
+    return result;
+}
+
+/*checks if string is a register index*/
+int isRegisterNameInRange(char *str)
+{
+    int converted;
+    int result = 0;
+    char *temp;
+    if (str == NULL)
+        return result;
+    if (str[0] == 'r') /*first digit is 'r'*/
+    {
+        if (strlen(str) == 2 && isdigit(str[1])) /*only one number after r*/
+        {
+            result = 1;
+        }
+        else
+        {
+            if (strlen(str) == 3 && isdigit(str[1]) && isdigit(str[2])) /*if two numbers after*/
+            {
+                temp = (char *)malloc(2);/*check second digit*/
+                temp[0] = str[1];
+                temp[1] = END_OF_STRING;
+                converted = atoi(temp);
+                free(temp);
+                if (converted <= 5 && str[1] == '1')/*also check first digit to be in range 0-5*/
+                    result = 1;
+            }
+        }
+        return result;
+    }
+}

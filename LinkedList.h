@@ -12,6 +12,7 @@ typedef struct node
     struct node *next;
 } node;
 
+node *initList();/*List constructor*/
 void insertnewnode(node *list, char *key, void *data);/*insert new node to list, only with data*/
 void insertnode(node *list, node *newnode);/*insert node to list*/
 node *createNode(char *key, void *data);/*create new node struct object*/

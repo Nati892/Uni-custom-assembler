@@ -2,6 +2,9 @@
 
 int main(int argc, char **argv)
 { 
+
+
+
     handleParams(argc, argv);
 
     return 0;
@@ -55,4 +58,10 @@ void doSomthingToFile(FILE *file, char *path)
     }
 
    
+}
+
+void initKeyWordsList()
+{
+
+
 }

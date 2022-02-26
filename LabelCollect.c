@@ -1,5 +1,112 @@
 #include "LabelCollect.h"
 
+node *collectAllLabels(FILE *src)
+{
+    node *label_table;
+    label_table = initList();
+    fseek(src, 0, SEEK_SET); /*make sure the file stream is at the start*/
+    collectExternAndNormalLabels(src, label_table);
+
+    return label_table;
+}
+
+void collectExternAndNormalLabels(FILE *src, node *label_table)
+{
+    int label_type, is_extern;
+    char *current_line, *current_word, *temp;
+
+    printf("********LABEL TEST***********");
+    current_line = getLine(src);
+    while (current_line != NULL && !isCommentLine(current_line) && !isOnlyWhiteChars(current_line)) /*loop through all lines of file*/
+    {
+        printf("parsing line");
+        current_word = getWordFromLine(current_line); /*get first word in line*/
+
+        if (isLabelDefinition(current_word) || isExternDefinition(current_word))
+        {
+            /*DEBUG*/
+            if (isLabelDefinition(current_word))
+            {
+                printf("label:%s\n", current_word);
+            }
+            if (isExternDefinition(current_word))
+            {
+                printf(".extern: %s\n", current_word);
+            }
+        }
+        free(current_line);
+        current_line = getLine(src);
+    }
+}
+
+int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
+{
+    char *trimmed_str;
+    int result = 1;
+    int char_counter = 0; /*label name length is max 31 chars*/
+
+    trimmed_str = trimAll(str);
+    /*make sure that first letter is alphanumeric*/
+    if (!isalpha(trimmed_str[char_counter]))
+    {
+        result = 0;
+    }
+    else
+    {
+        char_counter++;
+        /*check that all chars are alphanumeric*/
+        while (trimmed_str[char_counter] != END_OF_STRING && trimmed_str[char_counter] != LABEL_DECLARATION_END)
+        {
+            if (!isalnum(trimmed_str[char_counter]))
+                result = 0;
+            char_counter++;
+        }
+        /*check that label name doesnt exceed max length and that it ends with ':' */
+        if (trimmed_str[char_counter] != LABEL_DECLARATION_END || char_counter > LABEL_NAME_MAX_LENGTH)
+        {
+            result = 0;
+        }
+        else /*check that there arent any more characters after the ':' definition*/
+        {
+            char_counter++;
+            if (trimmed_str[char_counter] != END_OF_STRING)
+            {
+                result = 0;
+            }
+        }
+    }
+    if (result)
+    {
+        result = !isKeyWord(str);
+    }
+
+    free(trimmed_str);
+
+    return result;
+}
+int isExternDefinition(char *str) /*check if it is an extern label*/
+{
+    char *trimmed_str;
+    int result = 1;
+
+    trimmed_str = trimAll(str);
+    if (strcmp(trimmed_str, EXTERN_WORD))
+        result = 0;
+    free(trimmed_str);
+    return result;
+}
+int isEntryDefinition(char *str) /*check if it is an entry definition*/
+{
+    char *trimmed_str;
+    int result = 1;
+
+    trimmed_str = trimAll(str);
+    if (strcmp(trimmed_str, ENTRY_WORD))
+        result = 0;
+    free(trimmed_str);
+    return result;
+}
+
 int isExtern(node *label_table, char *label_name)
 {
     node *returned_node;
@@ -130,7 +237,7 @@ void storeLable(node *label_table, char *label_name, int is_extern, int label_ty
         }
     }
     else
-    {  
+    {
         new_node = LabelConstructor(label_name, is_extern, label_type);
         insertnode(label_table, new_node);
     }
