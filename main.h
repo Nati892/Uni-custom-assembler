@@ -12,6 +12,7 @@
 int main(int argc, char **argv);
 void handleParams(int argc, char **argv);
 void doSomthingToFile(FILE *file, char *path);
+void LabelTester(FILE *file);
 #define AS_FILE_ENDING ".as"
 
 

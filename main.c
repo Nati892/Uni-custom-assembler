@@ -1,9 +1,7 @@
 #include "main.h"
 
 int main(int argc, char **argv)
-{ 
-
-
+{
 
     handleParams(argc, argv);
 
@@ -29,8 +27,9 @@ void handleParams(int argc, char **argv)
             mfile = fopen(current_file_path, "r+");
 
             doSomthingToFile(mfile, current_file_path);
-            if(mfile!=NULL)
-            fclose(mfile); 
+            LabelTester(mfile);
+            if (mfile != NULL)
+                fclose(mfile);
         }
         else
         {
@@ -43,9 +42,6 @@ void handleParams(int argc, char **argv)
 
 void doSomthingToFile(FILE *file, char *path)
 {
-    int i;
-    char *s1, *s2, *s3;
-
     if (file == NULL)
     {
         printf("blat doesnt exit\n");
@@ -54,14 +50,19 @@ void doSomthingToFile(FILE *file, char *path)
     else
     {
         goToLine(file, 0);
-        macroStage(file,path);
+        macroStage(file, path);
     }
-
-   
 }
 
-void initKeyWordsList()
+void LabelTester(FILE *file)
 {
-
-
+    if (file == NULL)
+    {
+        printf("Lable Test: blat doesnt exit\n");
+    }
+    else
+    {
+        fseek(file, 0, SEEK_SET);
+        collectAllLabels(file);
+    }
 }

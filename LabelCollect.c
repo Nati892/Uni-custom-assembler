@@ -15,28 +15,32 @@ void collectExternAndNormalLabels(FILE *src, node *label_table)
     int label_type, is_extern;
     char *current_line, *current_word, *temp;
 
-    printf("********LABEL TEST***********");
+    printf("********LABEL TEST***********\n");
     current_line = getLine(src);
-    while (current_line != NULL && !isCommentLine(current_line) && !isOnlyWhiteChars(current_line)) /*loop through all lines of file*/
+    while (current_line != NULL) /*loop through all lines of file*/
     {
-        printf("parsing line");
-        current_word = getWordFromLine(current_line); /*get first word in line*/
-
-        if (isLabelDefinition(current_word) || isExternDefinition(current_word))
+        if (!isCommentLine(current_line) && !isOnlyWhiteChars(current_line))
         {
-            /*DEBUG*/
-            if (isLabelDefinition(current_word))
+            printf("parsing line\n->%s\n",current_line);
+            current_word = getWordFromLine(current_line); /*get first word in line*/
+
+            if (isLabelDefinition(current_word) || isExternDefinition(current_word))
             {
-                printf("label:%s\n", current_word);
-            }
-            if (isExternDefinition(current_word))
-            {
-                printf(".extern: %s\n", current_word);
+                /*DEBUG*/
+                if (isLabelDefinition(current_word))
+                {
+                    printf("***FOUND label-> %s\n", current_word);
+                }
+                if (isExternDefinition(current_word))
+                {
+                    printf("***FOUND  .extern-> %s\n", current_word);
+                }
             }
         }
         free(current_line);
         current_line = getLine(src);
     }
+    printf("********LABEL TEST END***********\n");
 }
 
 int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
