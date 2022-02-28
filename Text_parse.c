@@ -313,6 +313,7 @@ int isKeyWord(char *str)
 {
     int i;
     int result = 0;
+    
     if (str == NULL)
         return result;
     for (i = 0; i < NUM_OF_KEYWORDS; i++) /*check if part of the reserved words */
@@ -322,10 +323,11 @@ int isKeyWord(char *str)
             result = 1;
         }
     }
-    if (result) /*checks if register */
+    if (!result) /*checks if register */
     {
-        result = !(isRegisterNameInRange(str));
+        result = (isRegisterNameInRange(str));
     }
+    
 
     return result;
 }
@@ -357,6 +359,7 @@ int isRegisterNameInRange(char *str)
                     result = 1;
             }
         }
-        return result;
+     
     }
+       return result;
 }

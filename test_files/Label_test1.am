@@ -1,7 +1,14 @@
-label:
+GOODlabel:
+1BADLABEL:
 	blat:
+	endm:
+	clr:
 	r0:
-	.extern 
+	.extern good
+	.extern 1bad
+	.extern r0
+	.extern r10
+	.extern
 	whyy:
 	r15:
 	r14:

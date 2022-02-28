@@ -11,6 +11,7 @@
 
 enum definition_status
 {
+    UNDEFINED=-3,
     INSTRUCTION = -2,
     DATA = -1,
     FALSE = 0,
@@ -28,12 +29,12 @@ enum error_code
 typedef struct
 {
     /* symbol store in node->key */
-    int value;
-    int base_address;
-    int offset;
-    int attrib_extern;
-    int attrib_entry;
-    int label_type; /*data or instruction*/
+    int _value;
+    int _base_address;
+    int _offset;
+    int _attrib_extern;
+    int _attrib_entry;
+    int _label_type; /*data or instruction*/
 } Label;
 
 
@@ -45,10 +46,11 @@ int isExtern(node *label_table, char *label_name);                       /**/
 int isEntry(node *label_table, char *label_name);                        /**/
 int isDataLabel(node *label_table, char *label_name);                    /**/
 int isInstructionLabel(node *label_table, char *label_name);             /**/
-node *LabelConstructor(char *label_name, int is_extern, int label_type); /**/
-void storeLable(node *label_table, char *label_name, int is_extern, int label_type);/**/
+node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
+void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 
 /*label related parsing functions*/
+int isGoodLabelName(char* str);
 int isLabelDefinition(char *str); /*checks if it is a 'label:' definition*/
 int isExternDefinition(char *str);     /*check if it is an extern label*/
 int isEntryDefinition(char *str); /*check if it is an entry definition*/
