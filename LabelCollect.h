@@ -20,6 +20,7 @@ enum definition_status
 
 enum error_code
 {
+    
     DOUBLE_LABEL_DEFINITION = -2,
     ALREADY_EXTERN = -1,
     NO_SUCH_LABEL = 0,
@@ -56,7 +57,7 @@ int isExternDefinition(char *str);     /*check if it is an extern label*/
 int isEntryDefinition(char *str); /*check if it is an entry definition*/
 int checkLabelName(char *str);    /*make sure label name is valid*/
 int checkLabelType(char *str);    /*if it is a Data or instruction*/
-
+void printLables(node * labelTable);/*DEBUG*/
 
 /*preserved key words*/
 

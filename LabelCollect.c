@@ -4,18 +4,18 @@ node *collectAllLabels(FILE *src)
 {
     node *label_table;
     label_table = initList();
-    fseek(src, 0, SEEK_SET); /*make sure the file stream is at the start*/
     collectExternAndNormalLabels(src, label_table);
-
+    collectEntryLabels(src, label_table);
+    printLables(label_table);
     return label_table;
 }
 
 void collectExternAndNormalLabels(FILE *src, node *label_table)
 {
-    char *current_line, *current_word, *temp;
-    node *curr_label = NULL;
+    char *current_line, *current_word;
 
     printf("********LABEL TEST***********\n");
+    fseek(src, 0, SEEK_SET); /*make sure the file stream is at the start*/
     current_line = getLine(src);
     while (current_line != NULL) /*loop through all lines of file and collect entry, data and instruction labels*/
     {
@@ -40,7 +40,7 @@ void collectExternAndNormalLabels(FILE *src, node *label_table)
                             if (NULL == findNode(label_table, current_word))
                             {
                                 printf("SAVING LABEL ->%s\n", current_word);
-                               storeLable(label_table,current_word, TRUE, FALSE, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED);
+                                storeLable(label_table, current_word, TRUE, FALSE, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED);
                             }
                         }
                     }
@@ -57,8 +57,7 @@ void collectExternAndNormalLabels(FILE *src, node *label_table)
                             if (NULL == findNode(label_table, current_word))
                             {
                                 printf("SAVING LABEL ->%s\n", current_word);
-                                storeLable(label_table,current_word, FALSE, UNDEFINED,UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED);
-                               
+                                storeLable(label_table, current_word, FALSE, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED);
                             }
                         }
                     }
@@ -73,8 +72,39 @@ void collectExternAndNormalLabels(FILE *src, node *label_table)
         free(current_line);
         current_line = getLine(src);
     }
-    /**/
     printf("********LABEL TEST END***********\n");
+}
+void collectEntryLabels(FILE *src, node *label_table)
+{
+    char *current_line, *current_word;
+    fseek(src, 0, SEEK_SET); /*make sure the file stream is at the start*/
+    current_line = getLine(src);
+    printf("**********collecting entries***********");
+    while (current_line != NULL)
+    {
+        if (!isCommentLine(current_line) && !isOnlyWhiteChars(current_line))
+        {
+            printf("\n***PARSING LINE\n->%s\n", current_line);
+            current_word = getWordFromLine(current_line); /*get first word in line*/
+            if (isEntryDefinition(current_word))
+            {
+
+                free(current_word);
+                current_line = extractWordFromStart(current_line);
+                current_word = getWordFromLine(current_line);      /*get the name of entry label*/
+                printf("found entry label->%s<-\n", current_word); /*DEBUG*/
+                setToEntry(label_table, current_word);
+                free(current_word);
+            }
+            else
+            {
+                free(current_word);
+            }
+        }
+        free(current_line);
+        current_line = getLine(src);
+    }
+    printf("**********FINSHED COLLECTING ENTRY LABELS**********\n");
 }
 
 int isGoodLabelName(char *str)
@@ -113,14 +143,10 @@ int isGoodLabelName(char *str)
         {
             result = !isKeyWord(str);
         }
-        if (result)
-        {
-        }
 
         free(trimmed_str);
-
-        return result;
     }
+    return result;
 }
 
 int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
@@ -209,6 +235,7 @@ int setToEntry(node *label_table, char *label_name)
     node *returned_node;
     Label *returned_label;
     int result = SUCCES;
+    printf("***GOTCHA!!!! FOUND ONE!!!!!***");
 
     returned_node = findNode(label_table, label_name);
     if (returned_node == NULL) /*in case label doesnt exist*/
@@ -217,14 +244,22 @@ int setToEntry(node *label_table, char *label_name)
     }
     else
     {
+
         returned_label = (Label *)returned_node->data;
-        if (returned_label->_attrib_extern) /*in case the label is extern*/
+        if (returned_label->_attrib_entry == TRUE) /*in case the label is extern*/
         {
             result = ALREADY_EXTERN;
         }
         else
-        {
-            returned_label->_attrib_extern = TRUE;
+        { /*cant be extern and entry*/
+            if (returned_label->_attrib_extern != TRUE)
+            {
+                returned_label->_attrib_entry = TRUE;
+            }
+            else
+            {
+                result = ALREADY_EXTERN;
+            }
         }
     }
     return result;
@@ -288,12 +323,13 @@ node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int la
 
 void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset)
 {
-Label *new_label=NULL;
-node *new_node=NULL;
+    Label *new_label = NULL;
+    node *new_node = NULL;
     if (label_table->key == NULL) /*if first in list*/
     {
         if (label_name != NULL) /*if valid name for label*/
         {
+            label_table->key = label_name;
             new_label = (Label *)malloc(sizeof(Label));
             new_label->_attrib_extern = is_extern;
             new_label->_label_type = label_type;
@@ -302,11 +338,27 @@ node *new_node=NULL;
             new_label->_base_address = base_address;
             new_label->_attrib_entry = attrib_entry;
             new_label->_offset = offset;
+            label_table->data = new_label;
         }
     }
     else
     {
         new_node = LabelConstructor(label_name, is_extern, attrib_entry, label_type, value, base_address, offset);
-            insertnode(label_table, new_node);
+        insertnode(label_table, new_node);
     }
+}
+
+void printLables(node *labelTable)
+{
+    Label *my_label;
+    printf("*****printing labels******\n");
+    while (labelTable != NULL)
+    {
+        printf("key ->%s<-\n", labelTable->key);
+        my_label = (Label *)labelTable->data;
+        printf("isEntry->%d<-\n", my_label->_attrib_entry);
+        printf("isExtern->%d<-\n", my_label->_attrib_extern);
+        labelTable = labelTable->next;
+    }
+    printf("***** FINISHED printing labels******");
 }

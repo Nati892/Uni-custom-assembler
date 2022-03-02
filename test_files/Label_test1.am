@@ -9,6 +9,7 @@ GOODlabel:
 	.extern r0
 	.extern r10
 	.extern
+	.entry r17
 	whyy:
 	r15:
 	r14:
