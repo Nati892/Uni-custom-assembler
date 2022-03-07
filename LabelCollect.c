@@ -1,5 +1,6 @@
 #include "LabelCollect.h"
 
+/*returns a list of all labels and if they are normal, extern or entry*/
 node *collectAllLabels(FILE *src)
 {
     node *label_table;
@@ -54,6 +55,7 @@ void collectExternAndNormalLabels(FILE *src, node *label_table)
                         current_word[strlen(current_word) - 1] = END_OF_STRING; /*remove the ':' char and check name*/
                         if (isGoodLabelName(current_word))                      /*if name is good then try to store it*/
                         {
+                            printf("GOOD Label name\n");
                             if (NULL == findNode(label_table, current_word))
                             {
                                 printf("SAVING LABEL ->%s\n", current_word);
@@ -117,12 +119,13 @@ int isGoodLabelName(char *str)
     {
         return 0;
     }
-
+    printf("checking label name->%s<-\n", str);
     trimmed_str = trimAll(str);
     /*make sure that first letter is alphanumeric*/
     if (!isalpha(trimmed_str[char_counter]))
     {
         result = 0;
+        printf("bad first letter\n");
     }
     else
     {
@@ -146,6 +149,8 @@ int isGoodLabelName(char *str)
 
         free(trimmed_str);
     }
+    if (result == 0)
+        printf("shitty label name\n");
     return result;
 }
 
@@ -362,3 +367,14 @@ void printLables(node *labelTable)
     }
     printf("***** FINISHED printing labels******");
 }
+
+/*checks whether is it a .data def*/
+int isDataLabelDefinition(char *str) 
+{
+
+
+
+}
+
+/*checks whether is it a .string def*/
+int isStringLabelDefinition(char *str) {}

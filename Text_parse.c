@@ -136,6 +136,21 @@ char *getWordFromLine(char *Line)
     return word;
 }
 
+char *getTrimmedWordFromLine(char *Line) /*gets a fully trimmed word from a string*/
+{
+    char *temp, *word;
+    temp = getWordFromLine(Line);
+    if (temp == NULL)
+        return NULL;
+    word = trimAll(temp);
+    free(temp);
+    if (word == NULL)
+    {
+        return NULL;
+    }
+    return word;
+}
+
 /*this function returns the given line without the first word, and frees the original line*/
 char *extractWordFromStart(char *Line)
 {
@@ -346,10 +361,10 @@ int isRegisterNameInRange(char *str)
             result = 1;
         }
         else
-        { 
+        {
             if (strlen(str) == 3 && isdigit(str[1]) && isdigit(str[2])) /*if two numbers after*/
             {
-                converted = atoi((str+2));
+                converted = atoi((str + 2));
                 if (converted <= 5 && str[1] == '1') /*also check first digit to be in range 0-5*/
                     result = 1;
             }
