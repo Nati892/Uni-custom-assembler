@@ -369,12 +369,23 @@ void printLables(node *labelTable)
 }
 
 /*checks whether is it a .data def*/
-int isDataLabelDefinition(char *str) 
+int isDataLabelDefinition(char *str)
 {
-
-
-
+    int result = TRUE;
+    if (str == NULL)
+        return FALSE;
+    if (strcmp(str, ".data") != 0)
+        result = FALSE;
+    return result;
 }
 
 /*checks whether is it a .string def*/
-int isStringLabelDefinition(char *str) {}
+int isStringLabelDefinition(char *str)
+{
+    int result = TRUE;
+    if (str == NULL)
+        return FALSE;
+    if (strcmp(str, ".string") != 0)
+        result = FALSE;
+    return result;
+}

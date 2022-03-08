@@ -32,13 +32,16 @@ int assemblerFirstPass(FILE src)
                     curr_Line = extractWordFromStart(curr_Line);
                     curr_Word = getTrimmedWordFromLine(curr_Line); /*get name*/
                     if (curr_Word == NULL)
-
-                    /*print error for MISSING LABEL NAME AT LINE ... */
+                    {
+                        /*ERROR*/
+                        /*print error for MISSING LABEL NAME AT LINE ... */
+                    }
                 }
                 else                                 /*if there is a label name*/
                 {                                    /*check if name is good*/
                     if (!isGoodLabelName(curr_Word)) /*in case of a bad label name*/
                     {
+                        /*ERROR*/
                         /*print error for bad label name for extern label in line ... */
                     }
                     else
@@ -47,6 +50,7 @@ int assemblerFirstPass(FILE src)
                         temp = getTrimmedWordFromLine(curr_Line);
                         if (temp != NULL)
                         {
+                            /*ERROR*/
                             /* throw error for extra text after extern def ... */
                         }
                         else
@@ -60,6 +64,7 @@ int assemblerFirstPass(FILE src)
                             {
                                 if (((Label *)currLabel->data)->_attrib_extern != TRUE)
                                 {
+                                    /*ERROR*/
                                     /* throw error for ext label already defined and not as external*/
                                 }
                             }
@@ -72,12 +77,53 @@ int assemblerFirstPass(FILE src)
             {
                 if (isEntryDefinition(curr_Word)) /*handle entry def*/
                 {
+                    free(curr_Word);
+                    curr_Line = extractWordFromStart(curr_Line);
+                    curr_Word = getTrimmedWordFromLine(curr_Line); /*get name*/
+                    if (curr_Word == NULL)
+                    {
+                        /*ERROR*/
+                        /*print error for MISSING LABEL NAME AT LINE ... */
+                    }
+                    else
+                    {
+                        if (!isGoodLabelName(curr_Word))
+                        {
+                            /*ERROR*/
+                            /*print error for ba label name at line...*/
+                        }
+                        else
+                        {
+                            curr_Line = extractWordFromStart(curr_Line);
+                            temp = getTrimmedWordFromLine(curr_Line);
+                            if (temp != NULL)
+                            {
+                                /*ERROR*/
+                                /* throw error for extra text after entry def ... */
+                            }
+                            else
+                            {
+                                currLabel = findNode(label_Table, curr_Word);
+                                if (currLabel == NULL)
+                                {
+                                    LabelConstructor(curr_Word, FALSE, TRUE, UNDEFINED, 0, 0, 0);
+                                }
+                                else
+                                {
+                                    if (((Label *)currLabel->data)->_attrib_entry != TRUE)
+                                    {
+                                        /*ERROR*/
+                                        /* throw error for entry label already defined and not as entry*/
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {
                     if (isDataLabelDefinition(curr_Word)) /*handle .data array*/
                     {
-                        
                     }
                     else
                     {
@@ -102,3 +148,15 @@ int assemblerFirstPass(FILE src)
     line_counter++;
 }
 }
+
+void handleDataLine(char *str)
+{
+
+
+}
+
+void handleStringLine(char *str)
+{
+}
+
+/*void getStringArray(char *str);*/

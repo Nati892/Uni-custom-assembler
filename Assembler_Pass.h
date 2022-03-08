@@ -22,8 +22,11 @@ enum SyntaxErrors{
 
 };
 
-int assemblerFirstPass(FILE src) {}
-int assemblerSecondPass(FILE src) {}
+int assemblerFirstPass(FILE src);
+int assemblerSecondPass(FILE src);
 
+
+void handleDataLine(char *str);
+void handleStringLine(char *str);
 int ResetAssembler() {} /*to implement in future for more then one input file*/
 #endif
