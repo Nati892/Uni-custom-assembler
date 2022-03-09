@@ -158,7 +158,6 @@ int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
 {
     char *trimmed_str;
     int result = 1;
-    int char_counter = 0; /*label name length is max 31 chars*/
 
     if (str == NULL)
     {

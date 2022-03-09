@@ -1,5 +1,15 @@
 #include "Assembler_Pass.h"
 
+static int no_Errors;
+static int DC;
+static int IC;
+static int line_counter;
+static int *Data_Image; /*int array, both numbers and characters are converted to numbers in the end, so its beter*/
+static int Data_Image_Length;
+static char *String_Image;
+static node *label_Table;
+static node *ext_file_table; /*used in second pass*/
+
 int assemblerFirstPass(FILE src)
 {
     /*setting up some  global normal and static variables, and setting file pointer to start.
@@ -33,7 +43,7 @@ int assemblerFirstPass(FILE src)
                 {
                     free(curr_Word);
                     curr_Line = extractWordFromStart(curr_Line);
-                    curr_Word = getTrimmedWordFromLine(curr_Line); /*get name*/
+                    curr_Word = getTrimmedWordFromLine(curr_Line); /*get name of label*/
 
                     handleExtern(curr_Word, curr_Line);
                 }
@@ -43,7 +53,7 @@ int assemblerFirstPass(FILE src)
                     {
                         free(curr_Word);
                         curr_Line = extractWordFromStart(curr_Line);
-                        curr_Word = getTrimmedWordFromLine(curr_Line); /*get name*/
+                        curr_Word = getTrimmedWordFromLine(curr_Line); /*get name of label*/
 
                         handleEntry(curr_Word, curr_Line);
                     }
@@ -63,11 +73,11 @@ int assemblerFirstPass(FILE src)
                     }
                 }
             }
-            else /*if just an instruction or label and data/string*/
+            else /*if just an instruction or label and then .data/.string*/
             {
                 if (isLabelDefinition(curr_Word))
                 {
-                    handleLabel(curr_Word, curr_Line); /*handles options for .data .string .entry .extern and posddible command*/
+                    handleLabel(curr_Word, curr_Line); /*handles options for .data .string .entry .extern and possible command*/
                 }
                 else
                 {
@@ -83,14 +93,14 @@ int assemblerFirstPass(FILE src)
     }
 }
 
-/*TODO ass the function protoypes to the header*/
+/*TODO add the function protoypes to the header*/
 
 void handleDataLine(char *str) /*ToDo*/
 {
     int curr_num;
     int i = 0;
     char *curr_num_string = NULL;
-    char *trimmedLine = trimAll(line);
+    char *trimmedLine = trimAll(str);
 
     printf(".data: got line->%s<-\n", str);
     if (trimmedLine == NULL)
@@ -98,13 +108,60 @@ void handleDataLine(char *str) /*ToDo*/
         /*ERROR no values to insert*/
         return;
     }
-
-    if (no_Errors && strlen(trimmedLine) > 0)
+    if (isOnlyWhiteChars(trimmedLine)) /*check for an empty line after .data*/
     {
-        curr_num_string = (char *)malloc(1);
-        curr_num_string[0] = END_OF_STRING;
-        while (no_Errors && strlen(trimmedLine) > 0)
+        /*ERROR no Params after .data line*/
+        printf("blat empty line\n");
+        noErrors = FALSE;
+    }
+
+    if (checkIntegerInText(trimmedLine) && no_Errors) /*check for first int*/
+    {
+        curr_num = getIntegerFromText(trimmedLine);
+        if (!isIntInRange(curr_num))
+        { /*ERROR no numbers after .data line*/
+            noErrors = FALSE;
+        }
+        addToDataImage(curr_num);
+        DC++;
+        removeIntegerFromText(trimmedLine);
+    }
+    while (!isOnlyWhiteChars(trimmedLine) && no_Errors) /*now only get comma and then Integer*/
+    {
+        if (countCommas(trimmedLine) == 1)
         {
+            removeComma(trimmedLine);
+            if (checkIntegerInText(trimmedLine)) /*check get number*/
+            {
+                curr_num = getIntegerFromText(trimmedLine);
+                if (!isIntInRange(curr_num))
+                { /*ERROR number out of range*/
+                    no_Errors = FALSE;
+                }
+                addToDataImage(curr_num);
+                DC++;
+                removeIntegerFromText(trimmedLine);
+            }
+            else
+            { /*ERROR missing number param*/
+                no_Errors = FALSE;
+            }
+        }
+        else
+        {
+            if (countCommas(trimmedLine) == 0) /*if there are no commas but there is text*/
+            {
+                if (!isOnlyWhiteChars(trimmedLine))
+                {
+                    /*ERROR missing comma or extraneous text*/
+                    no_Errors = FALSE;
+                }
+            }
+            else
+            {
+                /*ERROR multiple consecutive commas*/
+                no_Errors = FALSE;
+            }
         }
     }
 }
@@ -256,7 +313,7 @@ void handleEntry(char *name, char *line)
     }
 }
 
-/*ToDo dont forget ot chekc if ther are no errors and therefor */
+/*ToDo dont forget ot check if ther are no errors and therefor */
 void handleLabel(char *name, char *line) {}
 
 void handleCommand(char *str)
@@ -264,7 +321,6 @@ void handleCommand(char *str)
 }
 /*checks for syntax errors and if there are none then increment IC*/
 
-/*void getStringArray(char *str);*/
 /*ToDo store label*/
 /*make macro for error output FIRST_PASS_ERROR*/
 

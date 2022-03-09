@@ -1,5 +1,8 @@
 #include "Text_parse.h"
 
+static char keyWordsArr[][KEY_WORD_MAX_LENGTH] = {"macro", "endm", ".data", ".string", ".entry", ".extern", "mov", "cmp", "add", "sub",
+                                                  "lea", "clr", "not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
+
 /*returns new string made of (s1+s2), DOES NOT free s2 or s1*/
 char *appendString(char *s1, char *s2)
 {
@@ -394,17 +397,76 @@ int isRegisterNameInRange(char *str)
     return result;
 }
 
-/*get the number from the start of the text, this function is called knowing there is a umber to extract*/
-int getNumberFromText(char *str)
+/*get the number from the start of the text, this function is called knowing there is a well written number to extract*/
+int getIntegerFromText(char *str)
 {
     char *num_string;
     int i = 0;
-
+    int result;
+    num_string = initString();
     while (isWhiteChar(str[i])) /*skip white chars*/
     {
         i++;
-    } 
+    }
+    while (str[i] == PLUS_SIGN || str[i] == MINUS_SIGN || isdigit(str[i]))
+    {
+        appendCharAtEnd(num_string, str[i]);
+        i++;
+    }
+    result = atoi(num_string);
+    free(num_string);
+    return result;
 }
 
-int checkNumberInText(char *str);    /*checks if there is a number in the start of the text*/
-int removeNumberFromText(char *str); /*replaces all the number digits with space characters*/
+/*checks if there is a number in the start of the text*/
+int checkIntegerInText(char *str)
+{
+
+    int i = 0;
+    int result = FALSE;
+    if (str == NULL)
+        return FALSE;
+    while (isWhiteChar(str[i])) /*skip white chars*/
+    {
+        i++;
+    }
+
+    if (str[i] == PLUS_SIGN || str[i] == MINUS_SIGN) /*check + - signs*/
+    {
+        i++;
+    }
+    if (isdigit(str[i]))
+        result = TRUE;
+    while ((!isWhiteChar(str[i])) && str[i] != END_OF_STRING && str[i] != COMMA_CHAR)
+    {
+        if (!isdigit(str[i]))
+        {
+            result = FALSE;
+        }
+        i++;
+    }
+    return result;
+}
+
+void removeIntegerFromText(char *str) /*replaces all the number digits with space characters, called knowing there is a num at the start*/
+{
+
+    int i = 0;
+    while (isWhiteChar(str[i]))
+    {
+        i++;
+    }
+    while (str[i] == PLUS_SIGN || str[i] == MINUS_SIGN || isdigit(str[i]))
+    {
+        str[i] = SPACE_CHAR;
+        i++;
+    }
+}
+
+int isIntInRange(int myInt)
+{
+    if (myInt <= MAX_INT_SIZE && myInt >= MIN_INT_SIZE)
+        return TRUE;
+    else
+        return FALSE;
+}

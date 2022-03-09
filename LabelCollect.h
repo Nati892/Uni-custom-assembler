@@ -13,9 +13,7 @@ enum definition_status
 {
     UNDEFINED=-3,
     INSTRUCTION = -2,
-    DATA = -1,
-    FALSE = 0,
-    TRUE = 1
+    DATA = -1
 };
 
 enum error_code

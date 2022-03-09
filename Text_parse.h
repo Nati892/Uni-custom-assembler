@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-char *initString();
+char *initString();                              /*creates an empty string - only containing NULL terminator*/
 char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
 char *trimAll(char *text);                       /*trims text and returns NULL if all of text is white spaces*/
 char *trimStart(char *text, int amount);         /*trims amount of characters from start of string*/
@@ -28,15 +28,20 @@ int isCommentLine(char *line);                   /*returns 1 if its a comment li
 int isKeyWord(char *str);                        /*checks if string is a preserved word*/
 int isRegisterNameInRange(char *str);            /*checks if string is of the expression 'r'+0-15 */
 
-int getNumberFromText(char *str);    /*get the number from the start of the text*/
-int checkNumberInText(char *str);    /*checks if there is a number in the start of the text*/
-int removeNumberFromText(char *str); /*replaces all the number digits with space characters*/
+int getIntegerFromText(char *str);     /*get the number from the start of the text*/
+int checkIntegerInText(char *str);     /*checks if there is a number in the start of the text*/
+void removeIntegerFromText(char *str); /*replaces all the number digits with space characters*/
+int isIntInRange(int myInt);
 
 /*int isImmediate(char* str){}
 int isDirect(char* str){}
 int isIndex(char* str){}
 int isRegisterDirect(char* str){}*/
 
+#define TRUE 1
+#define FALSE 0
+#define PLUS_SIGN '+'
+#define MINUS_SIGN '-'
 #define QUOTATION_MARK 34
 #define DOT_CHAR '.'
 #define COMMA_CHAR ','
@@ -50,8 +55,7 @@ int isRegisterDirect(char* str){}*/
 #define LABEL_NAME_MAX_LENGTH 31
 #define ENTRY_WORD ".entry"
 #define EXTERN_WORD ".extern"
-
-static char keyWordsArr[][KEY_WORD_MAX_LENGTH] = {"macro", "endm", ".data", ".string", ".entry", ".extern", "mov", "cmp", "add", "sub",
-                                                  "lea", "clr", "not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
+#define MAX_INT_SIZE 32767 /*max 16 bit number*/
+#define MIN_INT_SIZE -32768/*min 16 bit number*/
 
 #endif
