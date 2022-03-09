@@ -34,6 +34,8 @@ write macro for error handling->
 -no-error=False;
 error in LINE, ERROR;
 
+add files to compilation in end
+
 
 
 */
