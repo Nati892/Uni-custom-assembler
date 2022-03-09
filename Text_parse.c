@@ -403,7 +403,7 @@ int getNumberFromText(char *str)
     while (isWhiteChar(str[i])) /*skip white chars*/
     {
         i++;
-    }
+    } 
 }
 
 int checkNumberInText(char *str);    /*checks if there is a number in the start of the text*/
