@@ -183,6 +183,26 @@ void appendEndLineChar(char *line)
     line[length + 1] = END_OF_STRING;
 }
 
+/*creates empty string*/
+char *initString()
+{
+    char *pointer;
+    pointer = (char *)malloc(1);
+    pointer[0] = END_OF_STRING;
+    return pointer;
+}
+/*appends char at the end of a string*/
+void appendCharAtEnd(char *line, char toAppend)
+{
+    int line_len;
+    if (line == NULL)
+        return;
+    line_len = strlen(line);
+    line = (char *)realloc(line, line_len + 2);
+    line[line_len] = toAppend;
+    line[line_len + 1] = END_OF_STRING;
+}
+
 /*compares 2 strings, THIS FUCNION CAN HANDLE NULLS AS WELL!*/
 int compareStrings(char *a, char *b)
 
@@ -373,3 +393,18 @@ int isRegisterNameInRange(char *str)
     printf("isREgister in range result -> %d<-\n", result);
     return result;
 }
+
+/*get the number from the start of the text, this function is called knowing there is a umber to extract*/
+int getNumberFromText(char *str)
+{
+    char *num_string;
+    int i = 0;
+
+    while (isWhiteChar(str[i])) /*skip white chars*/
+    {
+        i++;
+    }
+}
+
+int checkNumberInText(char *str);    /*checks if there is a number in the start of the text*/
+int removeNumberFromText(char *str); /*replaces all the number digits with space characters*/
