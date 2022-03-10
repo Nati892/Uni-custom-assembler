@@ -11,14 +11,14 @@
 
 enum definition_status
 {
-    UNDEFINED=-3,
+    UNDEFINED = -3,
     INSTRUCTION = -2,
     DATA = -1
 };
 
 enum error_code
 {
-    
+
     DOUBLE_LABEL_DEFINITION = -2,
     ALREADY_EXTERN = -1,
     NO_SUCH_LABEL = 0,
@@ -40,33 +40,23 @@ typedef struct
 node *collectAllLabels(FILE *src);
 void collectExternAndNormalLabels(FILE *src, node *label_table);
 void collectEntryLabels(FILE *src, node *label_table);
-int setToEntry(node *label_table, char *label_name);                     /*the function returns error_code as result*/
-int isExtern(node *label_table, char *label_name);                       /**/
-int isEntry(node *label_table, char *label_name);                        /**/
-int isDataLabel(node *label_table, char *label_name);                    /**/
-int isInstructionLabel(node *label_table, char *label_name);             /**/
+int setToEntry(node *label_table, char *label_name);         /*the function returns error_code as result*/
+int isExtern(node *label_table, char *label_name);           /**/
+int isEntry(node *label_table, char *label_name);            /**/
+int isDataLabel(node *label_table, char *label_name);        /**/
+int isInstructionLabel(node *label_table, char *label_name); /**/
 node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 
-
 /*label related parsing functions*/
-int isGoodLabelName(char* str);
-int isLabelDefinition(char *str); /*checks if it is a 'label:' definition*/
-int isExternDefinition(char *str);     /*check if it is an extern label*/
-int isEntryDefinition(char *str); /*check if it is an entry definition*/
-int isDataLabelDefinition(char *str);  /*checks whether is it a .data def*/
+int isGoodLabelName(char *str);
+int isLabelDefinition(char *str);       /*checks if it is a 'label:' definition*/
+int isExternDefinition(char *str);      /*check if it is an extern label*/
+int isEntryDefinition(char *str);       /*check if it is an entry definition*/
+int isDataLabelDefinition(char *str);   /*checks whether is it a .data def*/
 int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
-void printLables(node * labelTable);/*DEBUG*/
-
-/*preserved key words*/
-
+int calcBaseAddress(int line_num);
+int calcOffsetAddress(int line_num);
+void printLables(node *labelTable); /*DEBUG*/
 
 #endif
-/*
-create label table with linked list
-collect extern and normal label first
-and then go for entry labels
-
-check syntax errors
-check label errors
-*/

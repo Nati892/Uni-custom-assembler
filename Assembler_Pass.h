@@ -15,12 +15,24 @@ enum SyntaxErrors
     CORRECT,
 };
 
-int assemblerFirstPass(FILE src);
-int assemblerSecondPass(FILE src);
+void assemblerFirstPass(FILE *src);
+void assemblerSecondPass(FILE *src);
 
+int ResetAssembler() {} /*to implement in future for more then one input file*/
+
+/*helper methods for the main two big methods*/
 void handleDataLine(char *str);
 void handleStringLine(char *str);
-int ResetAssembler() {} /*to implement in future for more then one input file*/
+void handleExtern(char *name, char *line);
+void handleEntry(char *name, char *line);
+void handleLabel(char *name, char *line);
+void handleCommand(char *str);
+void addToDataImage(int num);
+void announceSyntaxError(char *ERR);
+void checkExternSyntax(char *name, char *line);
+void checkEntrySyntax(char *name, char *line);
+
+
 #endif
 
 /*
@@ -30,11 +42,10 @@ write code for label handling
 write code for ext detection when rewriting the commands
 
 write second pass and translation
-write macro for error handling->
--no-error=False;
-error in LINE, ERROR;
 
 add files to compilation in end
+
+add struct assembler_mem that will be generated prior to assembler
 
 
 

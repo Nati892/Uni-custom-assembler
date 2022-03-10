@@ -388,3 +388,13 @@ int isStringLabelDefinition(char *str)
         result = FALSE;
     return result;
 }
+
+int calcBaseAddress(int line_num)
+{
+    return ((line_num / 16) * 16);
+}
+
+int calcOffsetAddress(int line_num)
+{
+    return line_num % 16;
+}

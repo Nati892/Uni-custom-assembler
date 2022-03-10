@@ -55,7 +55,7 @@ int isRegisterDirect(char* str){}*/
 #define LABEL_NAME_MAX_LENGTH 31
 #define ENTRY_WORD ".entry"
 #define EXTERN_WORD ".extern"
-#define MAX_INT_SIZE 32767 /*max 16 bit number*/
-#define MIN_INT_SIZE -32768/*min 16 bit number*/
+#define MAX_INT_SIZE 32767  /*max 16 bit number*/
+#define MIN_INT_SIZE -32768 /*min 16 bit number*/
 
 #endif

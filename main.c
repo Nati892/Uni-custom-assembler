@@ -3,91 +3,107 @@
 int main(int argc, char **argv)
 {
 
-    handleParams(argc, argv);
-    /*  int noErrors = 1;
-      char *str;
-      char c;
-      int temp_int;
-      int i = 0;
-      str = (char *)malloc(400);
-      str[399] = END_OF_STRING;
-      c = getchar();
-      while (c != '\n' && c != EOF)
-      {
-          str[i] = c;
-          i++;
-          c = getchar();
-      }
-      str[i] = END_OF_STRING;
+    /*handleParams(argc, argv);*/
 
-      printf("got line->%s<-\n", str);
+    /*
+    int noErrors = 1;
+    char *str;
+    char c;
+    int temp_int;
+    int i = 0;
+    str = (char *)malloc(400);
+    str[399] = END_OF_STRING;
+    c = getchar();
+    while (c != '\n' && c != EOF)
+    {
+        str[i] = c;
+        i++;
+        c = getchar();
+    }
+    str[i] = END_OF_STRING;
 
-      if (isOnlyWhiteChars(str))
-      {
-          printf("blat empty line\n");
-          noErrors = FALSE;
-      }
+    printf("got line->%s<-\n", str);*/
 
-      if (checkIntegerInText(str) && noErrors)
-      {
-          temp_int = getIntegerFromText(str);
-          if (!isIntInRange(temp_int))
-          {
-              printf("BAD NUMBER!\n");
-              noErrors = FALSE;
-          }
-          printf("first num:%d\n", temp_int);
-          removeIntegerFromText(str);
-          printf("text after removed INT->%s<-\n", str);
-      }
-      while (!isOnlyWhiteChars(str) && noErrors)
-      {
-          if (countCommas(str) == 1)
-          {
-              removeComma(str);
-              printf("text after removed commas->%s<-\n", str);
-              if (checkIntegerInText(str))
-              {
-                  temp_int = getIntegerFromText(str);
-                  if (!isIntInRange(temp_int))
-                  {
-                      printf("BAD NUMBER!\n");
-                      noErrors = FALSE;
-                  }
-                  printf("got a char ->%d<-\n", temp_int);
-                  removeIntegerFromText(str);
-                  printf("text after removed INT->%s<-\n", str);
-              }
-              else
-              {
-                  printf("no int after comma\n");
-                  noErrors = FALSE;
-              }
-          }
-          else
-          {
-              if (countCommas(str) == 0)
-              {
-                  if (!isOnlyWhiteChars(str))
-                  {
 
-                      printf("missing comma or extermanious text after .data statement\n");
-                      noErrors = FALSE;
-                  }
-              }
-              else
-              {
 
-                  printf("too many commas\n");
-                  noErrors = FALSE;
-              }
-          }
-      }
+    /*
+    if (checkIntegerInText(str))
+    {
+        temp_int = getIntegerFromText(str);
+        printf("num:%d  ,base:%d,   offset: %d\n", temp_int, calcBaseAddress(temp_int), calcOffsetAddress(temp_int));
+    }*/
 
-      if (noErrors)
-          printf("NO ERRORS!\n");
-      else
-          printf("CRAP ERRORS!\n");*/
+
+
+    /* if (isOnlyWhiteChars(str))
+     {
+         printf("blat empty line\n");
+         noErrors = FALSE;
+     }
+
+     if (checkIntegerInText(str) && noErrors)
+     {
+         temp_int = getIntegerFromText(str);
+         if (!isIntInRange(temp_int))
+         {
+             printf("BAD NUMBER!\n");
+             noErrors = FALSE;
+         }
+         printf("first num:%d\n", temp_int);
+         removeIntegerFromText(str);
+         printf("text after removed INT->%s<-\n", str);
+     }
+     while (!isOnlyWhiteChars(str) && noErrors)
+     {
+         if (countCommas(str) == 1)
+         {
+             removeComma(str);
+             printf("text after removed commas->%s<-\n", str);
+             if (checkIntegerInText(str))
+             {
+                 temp_int = getIntegerFromText(str);
+                 if (!isIntInRange(temp_int))
+                 {
+                     printf("BAD NUMBER!\n");
+                     noErrors = FALSE;
+                 }
+                 printf("got a char ->%d<-\n", temp_int);
+                 removeIntegerFromText(str);
+                 printf("text after removed INT->%s<-\n", str);
+             }
+             else
+             {
+                 printf("no int after comma\n");
+                 noErrors = FALSE;
+             }
+         }
+         else
+         {
+             if (countCommas(str) == 0)
+             {
+                 if (!isOnlyWhiteChars(str))
+                 {
+
+                     printf("missing comma or extermanious text after .data statement\n");
+                     noErrors = FALSE;
+                 }
+             }
+             else
+             {
+
+                 printf("too many commas\n");
+                 noErrors = FALSE;
+             }
+         }
+     }
+
+     if (noErrors)
+         printf("NO ERRORS!\n");
+     else
+         printf("CRAP ERRORS!\n");*/
+
+
+         
     return 0;
 }
 
