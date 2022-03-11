@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-char *initString();                              /*creates an empty string - only containing NULL terminator*/
+char *initString();                              /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
 char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
 char *trimAll(char *text);                       /*trims text and returns NULL if all of text is white spaces*/
 char *trimStart(char *text, int amount);         /*trims amount of characters from start of string*/
@@ -18,7 +18,7 @@ void appendEndLineChar(char *line);              /*appends \n to given string*/
 void appendCharAtEnd(char *line, char toAppend); /*appends char at end of string*/
 int compareStrings(char *a, char *b);            /*compares two strings*/
 int countCommas(char *);                         /*counts the commas at the start of string*/
-void removeComma(char *);                         /*removes first comma in the start of string*/
+void removeComma(char *);                        /*removes first comma in the start of string*/
 int checkResidualText(char *);                   /*1 for no resdiual text, 0 for more text*/
 int isLastEOF(char *);                           /*checks if line ends with EOF, 1-true \ 0-false*/
 int isOnlyWhiteChars(char *);                    /*checks if line is only full of white chars*/
@@ -31,7 +31,7 @@ int isRegisterNameInRange(char *str);            /*checks if string is of the ex
 int getIntegerFromText(char *str);     /*get the number from the start of the text*/
 int checkIntegerInText(char *str);     /*checks if there is a number in the start of the text*/
 void removeIntegerFromText(char *str); /*replaces all the number digits with space characters*/
-int isIntInRange(int myInt);
+int isIntInRange(int myInt);           /*checks if int is a 16-bit number*/
 
 /*int isImmediate(char* str){}
 int isDirect(char* str){}

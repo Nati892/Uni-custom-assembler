@@ -10,36 +10,38 @@ enum ARE_FIELD
     E
 };
 
-typedef struct Assembler_mem
+typedef struct
 {
-     int no_Errors;
-     int DC;
-     int IC;
-     int line_counter;
-     int *Data_Image; /*int array, both numbers and characters are converted to numbers in the end, so its beter*/
-     int Data_Image_Length;
-     char *String_Image;
-     node *label_Table;
-     node *ext_file_table; /*used in second pass*/
-};
+    int no_Errors;
+    int DC;
+    int IC;
+    int line_counter;
+    int *Data_Image; /*int array, both numbers and characters are converted to numbers in the end, so its beter*/
+    int Data_Image_Length;
+    char *String_Image;
+    node *label_Table;
+    node *ext_file_table; /*used in second pass*/
+} Assembler_mem;
 
-void assemblerFirstPass(FILE *src);
-void assemblerSecondPass(FILE *src);
-
+void assemblerFirstPass(FILE *src, Assembler_mem *mem);
+void assemblerSecondPass(FILE *src, Assembler_mem *mem);
+void InitAssemblerMem(Assembler_mem *mem);
+void restartAssemblerMem(Assembler_mem *mem);
+void freeAssemblerMem(Assembler_mem *mem);
 /*int ResetAssembler() {} */ /*to implement in future for more then one input file*/
 
 /*helper methods for the main two big methods*/
-void handleDataLine(char *str);
-void handleStringLine(char *str);
-void handleExtern(char *name, char *line);
-void handleEntry(char *name, char *line);
-void handleLabel(char *name, char *line);
-void handleCommand(char *str);
-void addToDataImage(int num);
-void announceSyntaxError(char *ERR);
-void checkExternSyntax(char *name, char *line);
-void checkEntrySyntax(char *name, char *line);
-void debugAsm();
+void handleDataLine(char *str, Assembler_mem *mem);
+void handleStringLine(char *str, Assembler_mem *mem);
+void handleExtern(char *name, char *line, Assembler_mem *mem);
+void handleEntry(char *name, char *line, Assembler_mem *mem);
+void handleLabel(char *name, char *line, Assembler_mem *mem);
+void handleCommand(char *str, Assembler_mem *mem);
+void addToDataImage(int num, Assembler_mem *mem);
+void announceSyntaxError(char *ERR, Assembler_mem *mem);
+void checkExternSyntax(char *name, char *line, Assembler_mem *mem);
+void checkEntrySyntax(char *name, char *line, Assembler_mem *mem);
+void debugAsm(Assembler_mem *mem);
 
 #endif
 

@@ -135,6 +135,7 @@ void handleParams(int argc, char **argv)
 
 void doSomthingToFile(FILE *file, char *path)
 {
+    Assembler_mem *mem;
     if (file == NULL)
     {
         printf("blat doesnt exit\n");
@@ -144,8 +145,9 @@ void doSomthingToFile(FILE *file, char *path)
     {
         goToLine(file, 0);
         /*  macroStage(file, path);*/
-        assemblerFirstPass(file);
-        debugAsm();
+        mem = (Assembler_mem *)malloc(sizeof(Assembler_mem));
+        assemblerFirstPass(file, mem);  
+        debugAsm(mem);
+        freeAssemblerMem(mem);
     }
 }
- 
