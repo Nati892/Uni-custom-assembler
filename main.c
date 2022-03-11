@@ -3,7 +3,7 @@
 int main(int argc, char **argv)
 {
 
-    /*handleParams(argc, argv);*/
+    handleParams(argc, argv);
 
     /*
     int noErrors = 1;
@@ -24,16 +24,12 @@ int main(int argc, char **argv)
 
     printf("got line->%s<-\n", str);*/
 
-
-
     /*
     if (checkIntegerInText(str))
     {
         temp_int = getIntegerFromText(str);
         printf("num:%d  ,base:%d,   offset: %d\n", temp_int, calcBaseAddress(temp_int), calcOffsetAddress(temp_int));
     }*/
-
-
 
     /* if (isOnlyWhiteChars(str))
      {
@@ -102,8 +98,6 @@ int main(int argc, char **argv)
      else
          printf("CRAP ERRORS!\n");*/
 
-
-         
     return 0;
 }
 
@@ -126,7 +120,7 @@ void handleParams(int argc, char **argv)
             mfile = fopen(current_file_path, "r+");
 
             doSomthingToFile(mfile, current_file_path);
-            LabelTester(mfile);
+            /*LabelTester(mfile);*/
             if (mfile != NULL)
                 fclose(mfile);
         }
@@ -149,19 +143,9 @@ void doSomthingToFile(FILE *file, char *path)
     else
     {
         goToLine(file, 0);
-        macroStage(file, path);
+        /*  macroStage(file, path);*/
+        assemblerFirstPass(file);
+        debugAsm();
     }
 }
-
-void LabelTester(FILE *file)
-{
-    if (file == NULL)
-    {
-        printf("Lable Test: blat doesnt exit\n");
-    }
-    else
-    {
-        fseek(file, 0, SEEK_SET);
-        collectAllLabels(file);
-    }
-}
+ 

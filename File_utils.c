@@ -3,7 +3,7 @@
 /*NOT USED YET*/
 /*given a line number the program jumps to the start of the line*/
 int goToLine(FILE *file, int line_num)
-{
+{ 
     int Line_Pos = 1;
     int exit_status;
     char inputChar = 0;

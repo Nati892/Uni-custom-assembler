@@ -10,15 +10,23 @@ enum ARE_FIELD
     E
 };
 
-enum SyntaxErrors
+typedef struct Assembler_mem
 {
-    CORRECT,
+     int no_Errors;
+     int DC;
+     int IC;
+     int line_counter;
+     int *Data_Image; /*int array, both numbers and characters are converted to numbers in the end, so its beter*/
+     int Data_Image_Length;
+     char *String_Image;
+     node *label_Table;
+     node *ext_file_table; /*used in second pass*/
 };
 
 void assemblerFirstPass(FILE *src);
 void assemblerSecondPass(FILE *src);
 
-int ResetAssembler() {} /*to implement in future for more then one input file*/
+/*int ResetAssembler() {} */ /*to implement in future for more then one input file*/
 
 /*helper methods for the main two big methods*/
 void handleDataLine(char *str);
@@ -31,7 +39,7 @@ void addToDataImage(int num);
 void announceSyntaxError(char *ERR);
 void checkExternSyntax(char *name, char *line);
 void checkEntrySyntax(char *name, char *line);
-
+void debugAsm();
 
 #endif
 

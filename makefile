@@ -1,5 +1,5 @@
-main: main.o File_utils.o LinkedList.o Macro_Handler.o Text_parse.o LabelCollect.o
-	gcc -g -Wall -ansi -pedantic -std=c90 main.o File_utils.o LinkedList.o LabelCollect.o Macro_Handler.o Text_parse.o -o main -lm
+main: main.o File_utils.o LinkedList.o Macro_Handler.o Text_parse.o LabelCollect.o Assembler_Pass.o
+	gcc -g -Wall -ansi -pedantic -std=c90 main.o File_utils.o LinkedList.o LabelCollect.o Macro_Handler.o Text_parse.o Assembler_Pass.o -o main -lm
 	
 main.o: main.c main.h
 	gcc -c -Wall -ansi -pedantic -std=c90 main.c -o main.o
@@ -19,3 +19,5 @@ Text_parse.o: Text_parse.c Text_parse.h
 LabelCollect.o: LabelCollect.c LabelCollect.h LinkedList.o Text_parse.o
 	gcc -c -Wall -ansi -pedantic -std=c90 LabelCollect.c -o LabelCollect.o -lm
 	
+Assembler_Pass.o: Assembler_Pass.c Assembler_Pass.h LabelCollect.o Text_parse.o
+	gcc -c -Wall -ansi -pedantic -std=c90 Assembler_Pass.c -o Assembler_Pass.o -lm

@@ -11,23 +11,15 @@
 
 enum definition_status
 {
-    UNDEFINED = -3,
+    UNDEF= -3,
     INSTRUCTION = -2,
     DATA = -1
 };
 
-enum error_code
-{
-
-    DOUBLE_LABEL_DEFINITION = -2,
-    ALREADY_EXTERN = -1,
-    NO_SUCH_LABEL = 0,
-    SUCCES = 1
-};
 
 typedef struct
 {
-    /* symbol store in node->key */
+    /* symbol store in node->key */ 
     int _value;
     int _base_address;
     int _offset;
@@ -36,15 +28,7 @@ typedef struct
     int _label_type; /*data or instruction*/
 } Label;
 
-/*returns a label-table (linked list of lables), saying which label is entry/extern and/or normal*/
-node *collectAllLabels(FILE *src);
-void collectExternAndNormalLabels(FILE *src, node *label_table);
-void collectEntryLabels(FILE *src, node *label_table);
-int setToEntry(node *label_table, char *label_name);         /*the function returns error_code as result*/
-int isExtern(node *label_table, char *label_name);           /**/
-int isEntry(node *label_table, char *label_name);            /**/
-int isDataLabel(node *label_table, char *label_name);        /**/
-int isInstructionLabel(node *label_table, char *label_name); /**/
+
 node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 
