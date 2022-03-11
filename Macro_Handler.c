@@ -79,36 +79,7 @@ void collectMacros(FILE *file, node *LL)
     }
   
 }
-/*checks if text has the "macro" word at the start of it*/
-int isMacroStart(char *text)
-{
-    int result = 0;
-    char *temp = NULL;
-    temp = trimAll(text);
 
-    if (temp != NULL)
-    {
-        if (!strcmp(temp, MACRO_START))
-            result = 1;
-        free(temp);
-    }
-    return result;
-}
-
-/*checks if text has the "endm" word at the start of it*/
-int isMacroEnd(char *text)
-{
-    int result = 0;
-    char *temp = NULL;
-    temp = trimAll(text);
-    if (temp != NULL)
-    {
-        if (!strcmp(temp, MACRO_END))
-            result = 1;
-        free(temp);
-    }
-    return result;
-}
 
 /*this function spreads the text and macros from the src file to dst file*/
 void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)

@@ -1,0 +1,19 @@
+.data 1123,5235,-565,-0,+7
+.extern abcd abc
+.extern 
+.extern a
+ent: .data 1,2,3,4
+ent1: aw
+.string "abc"
+ent1: aww dawd
+ent2:
+		ent2:
+		ent3: hh
+		ent4:w
+	entadjwadawdjaw;dawdwad::
+	,
+	adawd
+	awdadawddw
+	be
+	extern:extern:
+	labell: .extern lab

@@ -34,10 +34,6 @@ void storeLable(node *label_table, char *label_name, int is_extern, int attrib_e
 /*label related parsing functions*/
 int isGoodLabelName(char *str);
 int isLabelDefinition(char *str);       /*checks if it is a 'label:' definition*/
-int isExternDefinition(char *str);      /*check if it is an extern label*/
-int isEntryDefinition(char *str);       /*check if it is an entry definition*/
-int isDataLabelDefinition(char *str);   /*checks whether is it a .data def*/
-int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
 int calcBaseAddress(int line_num);
 int calcOffsetAddress(int line_num);
 void printLables(node *labelTable); /*DEBUG*/

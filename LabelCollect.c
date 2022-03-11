@@ -1,6 +1,5 @@
 #include "LabelCollect.h"
 
-
 int isGoodLabelName(char *str)
 {
     char *trimmed_str;
@@ -66,32 +65,6 @@ int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
 
     return result;
 }
-int isExternDefinition(char *str) /*check if it is an extern label*/
-{
-    char *trimmed_str;
-    int result = 1;
-
-    trimmed_str = trimAll(str);
-    if (strcmp(trimmed_str, EXTERN_WORD))
-        result = 0;
-    free(trimmed_str);
-    return result;
-}
-int isEntryDefinition(char *str) /*check if it is an entry definition*/
-{
-    char *trimmed_str;
-    int result = 1;
-
-    trimmed_str = trimAll(str);
-    if (strcmp(trimmed_str, ENTRY_WORD))
-        result = 0;
-    free(trimmed_str);
-    return result;
-}
-
-
-
-
 
 node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset)
 {
@@ -140,45 +113,27 @@ void storeLable(node *label_table, char *label_name, int is_extern, int attrib_e
     }
 }
 
-void printLables(node *labelTable)/*DEBUG*/ 
+void printLables(node *labelTable) /*DEBUG*/
 {
     Label *my_label;
     printf("*****printing labels******\n");
     while (labelTable != NULL)
     {
-        printf("\nkey ->%s<-\n", labelTable->key);
+        if (labelTable->key != NULL)
+            printf("\nkey ->%s<-\n", labelTable->key);
         my_label = (Label *)labelTable->data;
-        printf("isEntry->%d<-\n", my_label->_attrib_entry);
-        printf("isExtern->%d<-\n", my_label->_attrib_extern);
-        printf("value->%d<-\n", my_label->_value);
-        printf("base ->%d<-\n", my_label->_base_address);
-        printf("offset->%d<-\n", my_label->_offset);
-        printf("labelType->%d<-\n", my_label->_label_type);
+        if (my_label != NULL)
+        {
+            printf("isEntry->%d<-\n", my_label->_attrib_entry);
+            printf("isExtern->%d<-\n", my_label->_attrib_extern);
+            printf("value->%d<-\n", my_label->_value);
+            printf("base ->%d<-\n", my_label->_base_address);
+            printf("offset->%d<-\n", my_label->_offset);
+            printf("labelType->%d<-\n", my_label->_label_type);
+        }
         labelTable = labelTable->next;
     }
     printf("***** FINISHED printing labels******");
-}
-
-/*checks whether is it a .data def*/
-int isDataLabelDefinition(char *str)
-{
-    int result = TRUE;
-    if (str == NULL)
-        return FALSE;
-    if (strcmp(str, ".data") != 0)
-        result = FALSE;
-    return result;
-}
-
-/*checks whether is it a .string def*/
-int isStringLabelDefinition(char *str)
-{
-    int result = TRUE;
-    if (str == NULL)
-        return FALSE;
-    if (strcmp(str, ".string") != 0)
-        result = FALSE;
-    return result;
 }
 
 int calcBaseAddress(int line_num)

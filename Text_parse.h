@@ -6,7 +6,26 @@
 #include <string.h>
 #include <ctype.h>
 
-
+enum instructions
+{
+    MOV = 2,
+    CMP,
+    ADD,
+    SUB,
+    LEA,
+    CLR,
+    NOT,
+    INC,
+    DEC,
+    JMP,
+    BNE,
+    JSR,
+    RED,
+    PRN,
+    RTS,
+    STOP
+};
+int isInstructionName(char *str);
 char *getLine(FILE *file);                       /*returns NULL if line only holds EOF or holds nothing*/
 char *initString();                              /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
 char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
@@ -30,10 +49,16 @@ int isCommentLine(char *line);                   /*returns 1 if its a comment li
 int isKeyWord(char *str);                        /*checks if string is a preserved word*/
 int isRegisterNameInRange(char *str);            /*checks if string is of the expression 'r'+0-15 */
 
-int getIntegerFromText(char *str);     /*get the number from the start of the text*/
-int checkIntegerInText(char *str);     /*checks if there is a number in the start of the text*/
-void removeIntegerFromText(char *str); /*replaces all the number digits with space characters*/
-int isIntInRange(int myInt);           /*checks if int is a 16-bit number*/
+int getIntegerFromText(char *str);      /*get the number from the start of the text*/
+int checkIntegerInText(char *str);      /*checks if there is a number in the start of the text*/
+void removeIntegerFromText(char *str);  /*replaces all the number digits with space characters*/
+int isIntInRange(int myInt);            /*checks if int is a 16-bit number*/
+int isExternDefinition(char *str);      /*check if it is an extern label*/
+int isEntryDefinition(char *str);       /*check if it is an entry definition*/
+int isDataLabelDefinition(char *str);   /*checks whether is it a .data def*/
+int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
+int isMacroStart(char *text);           /*checks if word is macro start*/
+int isMacroEnd(char *text);             /*checks if word is macro end*/
 
 /*int isImmediate(char* str){}
 int isDirect(char* str){}
@@ -55,6 +80,8 @@ int isRegisterDirect(char* str){}*/
 #define KEY_WORD_MAX_LENGTH 8
 #define LABEL_DECLARATION_END ':'
 #define LABEL_NAME_MAX_LENGTH 31
+#define MACRO_START "macro"
+#define MACRO_END "endm"
 #define ENTRY_WORD ".entry"
 #define EXTERN_WORD ".extern"
 #define MAX_INT_SIZE 32767  /*max 16 bit number*/

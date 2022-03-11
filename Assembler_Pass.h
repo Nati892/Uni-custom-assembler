@@ -10,6 +10,7 @@ enum ARE_FIELD
     E
 };
 
+/*this struct represents all the memory needed for the assembler to operate*/
 typedef struct
 {
     int no_Errors;

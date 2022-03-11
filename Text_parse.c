@@ -3,21 +3,94 @@
 static char keyWordsArr[][KEY_WORD_MAX_LENGTH] = {"macro", "endm", ".data", ".string", ".entry", ".extern", "mov", "cmp", "add", "sub",
                                                   "lea", "clr", "not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
 
-
 /*This function returns the next line,
 the function returns NULL if line only holds EOF or holds nothing.
 */
+
+int isInstructionName(char *str) /*if its an instruction name then returns the enum type of it,else returns FALSE*/
+{
+    int result = FALSE;
+    if (str != NULL)
+    {
+        if (!strcmp(str, "mov"))
+        {
+            result = MOV;
+        }
+        if (!strcmp(str, "cmp"))
+        {
+            result = CMP;
+        }
+        if (!strcmp(str, "add"))
+        {
+            result = ADD;
+        }
+        if (!strcmp(str, "sub"))
+        {
+            result = SUB;
+        }
+        if (!strcmp(str, "lea"))
+        {
+            result = LEA;
+        }
+        if (!strcmp(str, "clr"))
+        {
+            result = CLR;
+        }
+        if (!strcmp(str, "not"))
+        {
+            result = NOT;
+        }
+        if (!strcmp(str, "inc"))
+        {
+            result = INC;
+        }
+        if (!strcmp(str, "dec"))
+        {
+            result = DEC;
+        }
+        if (!strcmp(str, "jmp"))
+        {
+            result = JMP;
+        }
+        if (!strcmp(str, "bne"))
+        {
+            result = BNE;
+        }
+        if (!strcmp(str, "jsr"))
+        {
+            result = JSR;
+        }
+        if (!strcmp(str, "red"))
+        {
+            result = RED;
+        }
+        if (!strcmp(str, "prn"))
+        {
+            result = PRN;
+        }
+        if (!strcmp(str, "rts"))
+        {
+            result = RTS;
+        }
+        if (!strcmp(str, "stop"))
+        {
+            result = STOP;
+        }
+    }
+    return result;
+}
+
 char *getLine(FILE *file)
 {
     char *myString;
     int string_size = 0;
     char current_char = 0;
 
-    myString = (char *)malloc(1);/*initialize string */
+    myString = (char *)malloc(1); /*initialize string */
     while (current_char != ENDLINE && current_char != EOF)
     {
-        current_char = getc(file);/*get first char from line*/
-        if (current_char != ENDLINE && current_char != EOF)/*copy chars to string*/
+        current_char = getc(file);                          /*get first char from line*/
+        if (current_char != ENDLINE && current_char != EOF) /*copy chars to string*/
         {
             string_size++;
             myString = (char *)realloc(myString, string_size);
@@ -25,7 +98,7 @@ char *getLine(FILE *file)
         }
     }
 
-    if (current_char == ENDLINE)/*if reached end of line*/
+    if (current_char == ENDLINE) /*if reached end of line*/
     {
         string_size++;
         myString = (char *)realloc(myString, string_size);
@@ -82,14 +155,12 @@ char *appendString(char *s1, char *s2)
 /*returns the trimmed given text in a new string, does not free given text pointer*/
 char *trimAll(char *text)
 {
-    /* printf("trimAll started with word-->%s<--\n", text);*/
 
     char *trimmed_text, *temp;
     int i, j, text_length;
     if (text == NULL)
     {
         return NULL;
-        /*printf("trimAll ends with null \n");*/
     }
     text_length = strlen(text);
     j = text_length - 1;               /*j points to last char in string*/
@@ -111,7 +182,6 @@ char *trimAll(char *text)
         trimmed_text = trimEnd(temp, j);
         free(temp);
     }
-    /*printf("trimAll ended with -->%s<--\n", trimmed_text);*/
     return trimmed_text;
 }
 
@@ -397,23 +467,10 @@ int isCommentLine(char *line)
 /*checks if string is a preserved word*/
 int isKeyWord(char *str)
 {
-    int i;
-    int result = 0;
 
-    if (str == NULL)
-        return result;
-    for (i = 0; i < NUM_OF_KEYWORDS; i++) /*check if part of the reserved words */
-    {
-        if (!strcmp(str, keyWordsArr[i]))
-        {
-            result = 1;
-        }
-    }
-    if (!result) /*checks if register */
-    {
-        result = (isRegisterNameInRange(str));
-    }
-
+    int result = FALSE;
+    if (isInstructionName(str) || isDataLabelDefinition(str) || isStringLabelDefinition(str) || isEntryDefinition(str) || isExternDefinition(str) || isMacroEnd(str) || isMacroStart(str))
+        result = TRUE;
     return result;
 }
 
@@ -422,7 +479,6 @@ int isRegisterNameInRange(char *str)
 {
     int converted;
     int result = 0;
-    printf("isREgister in range-> %s<-\n", str);
     if (str == NULL)
         return result;
     if (str[0] == 'r') /*first digit is 'r'*/
@@ -441,7 +497,6 @@ int isRegisterNameInRange(char *str)
             }
         }
     }
-    printf("isREgister in range result -> %d<-\n", result);
     return result;
 }
 
@@ -517,4 +572,78 @@ int isIntInRange(int myInt)
         return TRUE;
     else
         return FALSE;
+}
+int isExternDefinition(char *str) /*check if it is an extern label*/
+{
+    char *trimmed_str;
+    int result = 1;
+
+    trimmed_str = trimAll(str);
+    if (strcmp(trimmed_str, EXTERN_WORD))
+        result = 0;
+    free(trimmed_str);
+    return result;
+}
+int isEntryDefinition(char *str) /*check if it is an entry definition*/
+{
+    char *trimmed_str;
+    int result = 1;
+
+    trimmed_str = trimAll(str);
+    if (strcmp(trimmed_str, ENTRY_WORD))
+        result = 0;
+    free(trimmed_str);
+    return result;
+}
+
+/*checks whether is it a .data def*/
+int isDataLabelDefinition(char *str)
+{
+    int result = TRUE;
+    if (str == NULL)
+        return FALSE;
+    if (strcmp(str, ".data") != 0)
+        result = FALSE;
+    return result;
+}
+
+/*checks whether is it a .string def*/
+int isStringLabelDefinition(char *str)
+{
+    int result = TRUE;
+    if (str == NULL)
+        return FALSE;
+    if (strcmp(str, ".string") != 0)
+        result = FALSE;
+    return result;
+}
+
+int isMacroStart(char *text)
+{
+    int result = 0;
+    char *temp = NULL;
+    temp = trimAll(text);
+
+    if (temp != NULL)
+    {
+        if (!strcmp(temp, MACRO_START))
+            result = 1;
+        free(temp);
+    }
+    return result;
+}
+
+/*checks if text has the "endm" word at the start of it*/
+int isMacroEnd(char *text)
+{
+    int result = 0;
+    char *temp = NULL;
+    temp = trimAll(text);
+    if (temp != NULL)
+    {
+        if (!strcmp(temp, MACRO_END))
+            result = 1;
+        free(temp);
+    }
+    return result;
 }
