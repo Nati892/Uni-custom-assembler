@@ -6,6 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 
+
+char *getLine(FILE *file);                       /*returns NULL if line only holds EOF or holds nothing*/
 char *initString();                              /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
 char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
 char *trimAll(char *text);                       /*trims text and returns NULL if all of text is white spaces*/

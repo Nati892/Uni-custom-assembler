@@ -7,7 +7,6 @@
 #include <ctype.h>
 #include "LinkedList.h"
 #include "Text_parse.h"
-#include "File_utils.h"
 
 enum definition_status
 {

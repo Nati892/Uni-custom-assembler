@@ -3,6 +3,54 @@
 static char keyWordsArr[][KEY_WORD_MAX_LENGTH] = {"macro", "endm", ".data", ".string", ".entry", ".extern", "mov", "cmp", "add", "sub",
                                                   "lea", "clr", "not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
 
+
+/*This function returns the next line,
+the function returns NULL if line only holds EOF or holds nothing.
+*/
+char *getLine(FILE *file)
+{
+    char *myString;
+    int string_size = 0;
+    char current_char = 0;
+
+    myString = (char *)malloc(1);/*initialize string */
+    while (current_char != ENDLINE && current_char != EOF)
+    {
+        current_char = getc(file);/*get first char from line*/
+        if (current_char != ENDLINE && current_char != EOF)/*copy chars to string*/
+        {
+            string_size++;
+            myString = (char *)realloc(myString, string_size);
+            myString[string_size - 1] = current_char;
+        }
+    }
+
+    if (current_char == ENDLINE)/*if reached end of line*/
+    {
+        string_size++;
+        myString = (char *)realloc(myString, string_size);
+        myString[string_size - 1] = current_char;
+    }
+
+    if (current_char == EOF)
+    {
+        if (string_size < 2)
+        {
+            free(myString);
+            return NULL;
+        }
+        else
+        {
+            fseek(file, -1, SEEK_CUR);
+        }
+    }
+    /*add \0 in the end of string*/
+    string_size++;
+    myString = (char *)realloc(myString, string_size);
+    myString[string_size - 1] = END_OF_STRING;
+    return myString;
+}
+
 /*returns new string made of (s1+s2), DOES NOT free s2 or s1*/
 char *appendString(char *s1, char *s2)
 {

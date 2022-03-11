@@ -143,7 +143,7 @@ void doSomthingToFile(FILE *file, char *path)
 
     else
     {
-        goToLine(file, 0);
+        fseek(file,0,SEEK_SET);
         /*  macroStage(file, path);*/
         mem = (Assembler_mem *)malloc(sizeof(Assembler_mem));
         assemblerFirstPass(file, mem);  

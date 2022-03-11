@@ -2,7 +2,6 @@
 #define Macro_Handler_h
 
 #include "LinkedList.h"
-#include "File_utils.h"
 #include "Text_parse.h"
 
 void macroStage(FILE *file, char *file_name);/*start of acro stage*/
