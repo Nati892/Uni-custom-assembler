@@ -60,6 +60,13 @@ int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
 int isMacroStart(char *text);           /*checks if word is macro start*/
 int isMacroEnd(char *text);             /*checks if word is macro end*/
 
+/*to be tested*/
+char *getParam(char *Line);        /*this function returned a trimmed version of the first param in line*/
+int isImmediateParam(char *Param); /*checks if recieved param is a of immediate indexing method*/
+int isDiractParam(char *Param);
+int isIndexParam(char *Param);
+int isRegisterDirectParam(char *Param);
+
 /*int isImmediate(char* str){}
 int isDirect(char* str){}
 int isIndex(char* str){}

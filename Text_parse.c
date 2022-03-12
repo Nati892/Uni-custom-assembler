@@ -647,3 +647,64 @@ int isMacroEnd(char *text)
     }
     return result;
 }
+
+/*this function returned a trimmed version of the first param in line*/
+char *getParam(char *Line)
+{
+    char *temp_param = NULL;
+    char *returned_parm = NULL;
+    int i = 0, j = 0;
+    if (!isOnlyWhiteChars(Line))
+    {
+        while (isWhiteChar(Line[i])) /*loop through white chars*/
+        {
+            i++;
+        }
+        while (!isWhiteChar(Line[i]) && Line[i] != COMMA_CHAR && Line[i] != END_OF_STRING)
+        {
+            i++;
+        }
+
+        temp_param = (char *)malloc(i + 1); /*include NULL terminator*/
+
+        temp_param[i] = END_OF_STRING;
+        for (j = 0; j < i; j++)
+        {
+            temp_param[j] = Line[j];
+        }
+        returned_parm = trimAll(temp_param);
+        free(temp_param);
+    }
+    return returned_parm;
+}
+
+int isImmediateParam(char *Param)
+{
+    char *trimmedParam = NULL;
+    int result = FALSE;
+    int len = 0;
+    if (Param != NULL && !isOnlyWhiteChars(Param))
+    {
+        trimmedParam = trimAll(Param);
+        len = strlen(trimmedParam);
+        if (len > 2 && trimmedParam[0] == '#') /*set mactro for hash*/
+        {
+            trimmedParam++; /*advance to first digit*/
+            result = TRUE;
+            while (END_OF_STRING != trimmedParam)
+            {
+                if (!isdigit(trimmedParam))
+                {
+                    result = FALSE;
+                }
+            }
+        }
+        free(trimmedParam);
+    }
+    return result;
+}
+
+
+int isDiractParam(char *Param);
+int isIndexParam(char *Param);
+int isRegisterDirectParam(char *Param);
