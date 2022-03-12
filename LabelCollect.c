@@ -1,49 +1,6 @@
 #include "LabelCollect.h"
 
-int isGoodLabelName(char *str)
-{
-    char *trimmed_str;
-    int result = 1;
-    int char_counter = 0; /*label name length is max 31 chars*/
 
-    if (str == NULL)
-    {
-        return 0;
-    }
-    printf("checking label name->%s<-\n", str);
-    trimmed_str = trimAll(str);
-    /*make sure that first letter is alphanumeric*/
-    if (!isalpha(trimmed_str[char_counter]))
-    {
-        result = 0;
-        printf("bad first letter\n");
-    }
-    else
-    {
-        char_counter++;
-        /*check that all chars are alphanumeric*/
-        while (trimmed_str[char_counter] != END_OF_STRING)
-        {
-            if (!isalnum(trimmed_str[char_counter]))
-                result = 0;
-            char_counter++;
-        }
-        if (char_counter > LABEL_NAME_MAX_LENGTH)
-        {
-            result = 0;
-        }
-
-        if (result)
-        {
-            result = !isKeyWord(str);
-        }
-
-        free(trimmed_str);
-    }
-    if (result == 0)
-        printf("shitty label name\n");
-    return result;
-}
 
 int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
 {

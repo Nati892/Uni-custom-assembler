@@ -49,6 +49,7 @@ int isCommentLine(char *line);                   /*returns 1 if its a comment li
 int isKeyWord(char *str);                        /*checks if string is a preserved word*/
 int isRegisterNameInRange(char *str);            /*checks if string is of the expression 'r'+0-15 */
 
+int isGoodLabelName(char *str);
 int getIntegerFromText(char *str);      /*get the number from the start of the text*/
 int checkIntegerInText(char *str);      /*checks if there is a number in the start of the text*/
 void removeIntegerFromText(char *str);  /*replaces all the number digits with space characters*/
@@ -60,7 +61,15 @@ int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
 int isMacroStart(char *text);           /*checks if word is macro start*/
 int isMacroEnd(char *text);             /*checks if word is macro end*/
 
-/*int isImmediate(char* str){}
+/*to be tested*/
+char *getParam(char *Line);        /*this function returned a trimmed version of the first param in line*/
+int isImmediateParam(char *Param); /*checks if recieved param is a of immediate indexing method*/
+char *extractParam(char *str);
+int isDiractParam(char *Param);
+int isIndexParam(char *Param);
+int isRegisterDirectParam(char *Param);
+
+/*int isImmediate(char* str){} 
 int isDirect(char* str){}
 int isIndex(char* str){}
 int isRegisterDirect(char* str){}*/

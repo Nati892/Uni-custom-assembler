@@ -32,7 +32,6 @@ node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int la
 void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset);
 
 /*label related parsing functions*/
-int isGoodLabelName(char *str);
 int isLabelDefinition(char *str);       /*checks if it is a 'label:' definition*/
 int calcBaseAddress(int line_num);
 int calcOffsetAddress(int line_num);

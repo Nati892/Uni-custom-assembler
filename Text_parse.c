@@ -1,8 +1,5 @@
 #include "Text_parse.h"
 
-static char keyWordsArr[][KEY_WORD_MAX_LENGTH] = {"macro", "endm", ".data", ".string", ".entry", ".extern", "mov", "cmp", "add", "sub",
-                                                  "lea", "clr", "not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
-
 /*This function returns the next line,
 the function returns NULL if line only holds EOF or holds nothing.
 */
@@ -644,6 +641,212 @@ int isMacroEnd(char *text)
         if (!strcmp(temp, MACRO_END))
             result = 1;
         free(temp);
+    }
+    return result;
+}
+
+/*this function returns whether or not a label name is legal*/
+int isGoodLabelName(char *str)
+{
+    char *trimmed_str;
+    int result = 1;
+    int char_counter = 0; /*label name length is max 31 chars*/
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+    printf("checking label name->%s<-\n", str);
+    trimmed_str = trimAll(str);
+    /*make sure that first letter is alphanumeric*/
+    if (!isalpha(trimmed_str[char_counter]))
+    {
+        result = 0;
+        printf("bad first letter\n");
+    }
+    else
+    {
+        char_counter++;
+        /*check that all chars are alphanumeric*/
+        while (trimmed_str[char_counter] != END_OF_STRING)
+        {
+            if (!isalnum(trimmed_str[char_counter]))
+                result = 0;
+            char_counter++;
+        }
+        if (char_counter > LABEL_NAME_MAX_LENGTH)
+        {
+            result = 0;
+        }
+
+        if (result)
+        {
+            result = !isKeyWord(str);
+        }
+
+        free(trimmed_str);
+    }
+    if (result == 0)
+        printf("shitty label name\n");
+    return result;
+}
+/*this function returned a trimmed version of the first param in line*/
+char *getParam(char *Line)
+{
+    char *temp_param = NULL;
+    char *returned_parm = NULL;
+    int i = 0, j = 0;
+    if (!isOnlyWhiteChars(Line))
+    {
+        while (isWhiteChar(Line[i])) /*loop through white chars*/
+        {
+            i++;
+        }
+        while (!isWhiteChar(Line[i]) && Line[i] != COMMA_CHAR && Line[i] != END_OF_STRING)
+        {
+            i++;
+        }
+
+        temp_param = (char *)malloc(i + 1); /*include NULL terminator*/
+
+        temp_param[i] = END_OF_STRING;
+        for (j = 0; j < i; j++)
+        {
+            temp_param[j] = Line[j];
+        }
+        returned_parm = trimAll(temp_param);
+        free(temp_param);
+    }
+    return returned_parm;
+}
+
+char *extractParam(char *str)
+{
+    int i = 0, j = 0;
+    char *new_str;
+    while (isWhiteChar(str[i])) /*loop through white chars*/
+    {
+        i++;
+    }
+    while (!isWhiteChar(str[i]) && str[i] != COMMA_CHAR && str[i] != END_OF_STRING)
+    {
+        i++;
+    }
+    new_str = (char *)malloc(strlen(str) - i);
+    new_str[strlen(str) - i - 1] = END_OF_STRING;
+    for (j = 0; j < (strlen(str) - i - 1); j++)
+    {
+        new_str[j] = str[i + j];
+    }
+    free(str);
+    return new_str;
+}
+
+int isImmediateParam(char *Param)
+{
+    char *trimmedParam = NULL;
+    int result = FALSE;
+    int len = 0;
+    char *integer_to_check;
+    if (Param != NULL && !isOnlyWhiteChars(Param))
+    {
+        trimmedParam = trimAll(Param);
+        len = strlen(trimmedParam);
+        if (len > 2 && trimmedParam[0] == '#') /*set macro for hash*/
+        {
+            trimmedParam++; /*advance to first digit*/
+            if (checkIntegerInText(Param))
+            {
+                integer_to_check = getIntegerFromText(Param); /*get int text*/
+                if (isIntInRange(atoi(integer_to_check)))     /*check if int is in range of 16 bit numbers*/
+                    result = TRUE;
+                free(integer_to_check);
+                free(trimmedParam);
+            }
+        }
+        free(trimmedParam);
+    }
+    return result;
+}
+
+int isDiractParam(char *Param)
+{
+    int result = FALSE;
+    char *trimmed_parm;
+    if (Param != NULL & !isOnlyWhiteChars(Param))
+    {
+        trimmed_parm = trimAll(Param);
+        if (isGoodLabelName(trimmed_parm))
+        {
+            result = TRUE;
+        }
+    }
+    return result;
+}
+
+int isIndexParam(char *Param)
+{
+    int result = TRUE;
+    char *trimmed_param;
+    char *temp;
+    int j = 0;
+    int i = 0;
+    if (Param == NULL || isOnlyWhiteChars(Param))
+    {
+        return FALSE;
+    }
+
+    trimmed_param = trimAll(Param);
+    i = 0;
+    while (trimmed_param[i] != END_OF_STRING && !isWhiteChar(trimmed_param[i]) && trimmed_param[i] != '[')
+    {
+        i++;
+    } /*skip the first word, and check to see if its a valid name for a parameter*/
+    temp = (char *)malloc(i + 1);
+    temp[i] = END_OF_STRING;
+    while (j < i)
+    {
+        temp[j] = trimmed_param[j];
+    }
+    if (!isGoodLabelName(temp))
+        result = FALSE;
+    free(temp);
+    if (trimmed_param[i] != '[')
+        result = FALSE;
+    i++;
+
+    if (trimmed_param[strlen(trimmed_param) - 1] != ']')
+        result = 0;
+    if (strlen(trimmed_param) - i != 4)
+    {
+        result = 0;
+    }
+    else
+    {
+        temp = (char *)malloc(4);
+        temp[3] = END_OF_STRING;
+        j = 0;
+        while (i < strlen(trimmed_param) - 1)
+        {
+            temp[0] = trimmed_param[j];
+            j++;
+            i++;
+        }
+        if (!isRegisterNameInRange(temp))
+            result = FALSE;
+    }
+
+    return result;
+}
+
+int isRegisterDirectParam(char *Param)
+{
+    char *trimmed_param;
+    int result;
+    if (Param != NULL && !isOnlyWhiteChars(Param))
+    {
+        trimmed_param = trimAll(Param);
+        result = isRegisterNameInRange(trimmed_param);
     }
     return result;
 }

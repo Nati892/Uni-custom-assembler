@@ -71,7 +71,7 @@ void collectMacros(FILE *file, node *LL)
                     line = getLine(file);
                     temp = (trimAll(line));
                 }
-                storeMacro(LL, macro_key, macro_body);/*if finished collecting the current macro then save it*/
+                insertnewnode(LL, macro_key, macro_body);/*if finished collecting the current macro then save it*/
             }
         }
         free(line);
@@ -153,16 +153,6 @@ void spreadMacros(FILE *src_file, FILE *dest_file, node *LL)
    
 }
 
-/*copy substing to a given file*/
-void copySubstringToFile(FILE *dest_file, char *mystring, int start, int length)
-{
-    int i;
-    for (i = 0; i < length; i++)
-    {
-        putc(mystring[i + start], dest_file);
-    }
-}
-
 
 /*creates the macro '.am' file */
 FILE *createMacroFile(char *file_name)
@@ -176,19 +166,5 @@ FILE *createMacroFile(char *file_name)
     am_file = fopen(am_file_name, "w+");/*create the file*/
    
     return am_file;
-}
-
-/*stors a macro*/
-void storeMacro(node *LL, char *macro_name, char *macro_body)
-{
-    if (LL->key == NULL) /*for the first macro*/
-    {
-        LL->key = macro_name;
-        LL->data = macro_body;
-    }
-    else
-    {
-        insertnewnode(LL, macro_name, macro_body);
-    }
 }
 

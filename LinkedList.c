@@ -13,7 +13,13 @@ void insertnode(node *list, node *newnode)
 /*gets node field parameters, creates new node and inserts it to the given list*/
 void insertnewnode(node *list, char *key, void *data)
 {
-    insertnode(list, createNode(key, data));
+    if (list->key != NULL)
+        insertnode(list, createNode(key, data));
+    else
+    {
+        list->key = key;
+        list->data = data;
+    }
 }
 
 /*creates new node from given data fields*/
