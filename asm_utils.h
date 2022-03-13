@@ -17,11 +17,16 @@ typedef struct
     node *ext_file_table; /*used in second pass*/
 } Assembler_mem;
 
+enum ARE_FIELD
+{
+    ARE_A,
+    ARE_R,
+    ARE_E
+};
+
 void InitAssemblerMem(Assembler_mem *mem);
 void restartAssemblerMem(Assembler_mem *mem);
 void freeAssemblerMem(Assembler_mem *mem);
 void announceSyntaxError(char *ERR, Assembler_mem *mem);
-
-
-
+void setARE(char *word, int ARE);
 #endif

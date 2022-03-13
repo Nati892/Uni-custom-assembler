@@ -93,6 +93,37 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     }
 }
 
+/*the second pass is called knowing there arent any errors in the first pass*/
+void assemblerSecondPass(FILE *src, Assembler_mem *mem)
+{
+    char *curr_Line, *curr_Word;
+    fseek(src, 0, SEEK_SET); /*set file read point to start*/
+    mem->line_counter = 0;
+
+    curr_Line = getLine(src);
+    while (curr_Line != NULL) /*loop through the lines*/
+    {
+        if (!isCommentLine(curr_Line) && !isOnlyWhiteChars(curr_Line)) /*if its a comment then Ignore the line*/
+        {
+            curr_Word = getTrimmedWordFromLine(curr_Line);
+
+            if (isLabelDefinition(curr_Word))
+            {
+                free(curr_Word);
+                curr_Word = getTrimmedWordFromLine(curr_Line);
+            }
+            if (isInstructionName(curr_Word) != FALSE)
+                SpreadCommand(curr_Line, mem); /* adds command length to mem->IC*/
+
+            if (curr_Word != NULL)
+                free(curr_Word);
+        }
+
+        free(curr_Line);
+        curr_Line = getLine(src);
+    }
+}
+
 void handleDataLine(char *str, Assembler_mem *mem)
 {
     int is_good_data = TRUE;
@@ -618,3 +649,65 @@ void reCalcDataLabels(Assembler_mem *mem)
         }
     }
 }
+
+void SpreadCommand(char *str, Assembler_mem *mem)
+{
+    char *word, *new_str;
+    word = getTrimmedWordFromLine(str);
+    new_str = trimAll(str);
+    new_str = extractWordFromStart(new_str);
+    switch (isInstructionName(str))
+    {
+    case MOV:
+        MOVtranslate(new_str, mem);
+        break;
+    case CMP:
+        CMPtranslate(new_str, mem);
+        break;
+    case ADD:
+        ADDtranslate(new_str, mem);
+        break;
+    case SUB:
+        SUBtranslate(new_str, mem);
+        break;
+    case LEA:
+        LEAtranslate(new_str, mem);
+        break;
+    case CLR:
+        CLRtranslate(new_str, mem);
+        break;
+    case NOT:
+        NOTtranslate(new_str, mem);
+        break;
+    case INC:
+        INCtranslate(new_str, mem);
+        break;
+    case DEC:
+        DECtranslate(new_str, mem);
+        break;
+    case JMP:
+        JMPtranslate(new_str, mem);
+        break;
+    case BNE:
+        BNEtranslate(new_str, mem);
+        break;
+    case JSR:
+        JSRtranslate(new_str, mem);
+        break;
+    case RED:
+        REDtranslate(new_str, mem);
+        break;
+    case PRN:
+        PRNtranslate(new_str, mem);
+        break;
+    case RTS:
+        RTStranslate(new_str, mem);
+        break;
+    case STOP:
+        STOPtranslate(new_str, mem);
+        break;
+    default:
+        break;
+    }
+}
+

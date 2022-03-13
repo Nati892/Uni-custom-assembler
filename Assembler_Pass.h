@@ -4,12 +4,7 @@
 #include "LabelCollect.h"
 #include "cmd_handler.h"
 #include "asm_utils.h"
-enum ARE_FIELD
-{
-    A,
-    R,
-    E
-};
+
 
 void assemblerFirstPass(FILE *src, Assembler_mem *mem);  /*run assemblers first pass, collect all labels and look for syntax errors*/
 void assemblerSecondPass(FILE *src, Assembler_mem *mem); /*look for errors that are not possible to find on first pass and translate the code to binary*/
@@ -29,6 +24,8 @@ void checkEntrySyntax(char *name, char *line, Assembler_mem *mem);
 void debugAsm(Assembler_mem *mem); /*DEBUG TODELETE*/
 void reCalcDataLabels(Assembler_mem *mem);
 
+void SpreadCommand(char *str,Assembler_mem *mem);
+
 #define MAX_PROGRAM_LENGTH 8192
 #define MAX_Line_LENGTH 80
 #endif
@@ -38,7 +35,7 @@ write code for ext detection when rewriting the commands
 
 write second pass and translation
 
-add files to compilation in end
+
 
 
 

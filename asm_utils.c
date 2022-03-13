@@ -41,3 +41,19 @@ void announceSyntaxError(char *ERR, Assembler_mem *mem)
     mem->no_Errors = FALSE;
     printf("ERROR in line %d:: %s\n", mem->line_counter, ERR);
 }
+
+void setARE(char *word, int ARE)
+{
+    switch (ARE)
+    {
+    case ARE_A:
+        word[1] = 1;
+        break;
+    case ARE_R:
+        word[2] = 1;
+        break;
+    case ARE_E:
+        word[3] = 1;
+        break;
+    }
+}

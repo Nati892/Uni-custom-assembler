@@ -124,7 +124,6 @@ void MOVcountLines(char *str, Assembler_mem *mem)
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
-
 void CMPcountLines(char *str, Assembler_mem *mem)
 {
     int isGoodLine = TRUE;
@@ -674,3 +673,25 @@ void STOPcountLines(char *str, Assembler_mem *mem)
 {
     RTScountLines(str, mem);
 }
+
+void MOVtranslate(char *str, Assembler_mem *mem)
+{
+    char firstline[20];
+    char secondline[20];
+    setARE(firstline,ARE_A);
+}
+void CMPtranslate(char *str, Assembler_mem *mem);
+void ADDtranslate(char *str, Assembler_mem *mem);
+void SUBtranslate(char *str, Assembler_mem *mem);
+void LEAtranslate(char *str, Assembler_mem *mem);
+void CLRtranslate(char *str, Assembler_mem *mem);
+void NOTtranslate(char *str, Assembler_mem *mem);
+void INCtranslate(char *str, Assembler_mem *mem);
+void DECtranslate(char *str, Assembler_mem *mem);
+void JMPtranslate(char *str, Assembler_mem *mem);
+void BNEtranslate(char *str, Assembler_mem *mem);
+void JSRtranslate(char *str, Assembler_mem *mem);
+void REDtranslate(char *str, Assembler_mem *mem);
+void PRNtranslate(char *str, Assembler_mem *mem);
+void RTStranslate(char *str, Assembler_mem *mem);
+void STOPtranslate(char *str, Assembler_mem *mem);

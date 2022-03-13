@@ -39,7 +39,7 @@ void appendEndLineChar(char *line);              /*appends \n to given string*/
 void appendCharAtEnd(char *line, char toAppend); /*appends char at end of string*/
 int compareStrings(char *a, char *b);            /*compares two strings*/
 int countCommas(char *LinePointer);              /*counts the commas at the start of string*/
-void removeComma(char *);                         /*removes first comma in the start of string*/
+void removeComma(char *);                        /*removes first comma in the start of string*/
 int checkResidualText(char *);                   /*1 for no resdiual text, 0 for more text*/
 int isLastEOF(char *);                           /*checks if line ends with EOF, 1-true \ 0-false*/
 int isOnlyWhiteChars(char *);                    /*checks if line is only full of white chars*/
