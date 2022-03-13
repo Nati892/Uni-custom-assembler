@@ -93,7 +93,12 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
         curr_Line = getLine(src); /* get next line in file */
         mem->line_counter++;
     }
-    
+    if ((mem->IC + mem->DC) > MAX_PROGRAM_LENGTH)
+        announceSyntaxError("program two long, max legnth is 8092 lines!",mem);
+    if (mem->no_Errors)
+    {
+        reCalcDataLabels(mem);
+    }
 }
 
 void handleDataLine(char *str, Assembler_mem *mem)
@@ -620,4 +625,25 @@ void debugAsm(Assembler_mem *mem)
     printf("mem->Data_Image_Length: %d\n", mem->Data_Image_Length);
     printf("printing label table\n\n\n");
     printLables(mem->label_Table);
+}
+
+void reCalcDataLabels(Assembler_mem *mem)
+{
+
+    node *label_table = mem->label_Table;
+    Label *curr_label;
+    while (label_table != NULL)
+    {
+        if (label_table->key != NULL)
+        {
+            curr_label = ((Label *)(label_table->data));
+            if (curr_label->_label_type = DATA)
+            {
+                curr_label->_value = curr_label->_value + mem->IC;
+                curr_label->_base_address = calcBaseAddress(curr_label->_value);
+                curr_label->_offset = calcOffsetAddress(curr_label->_value);
+            }
+            label_table = label_table->next;
+        }
+    }
 }

@@ -27,8 +27,11 @@ void addToDataImage(int num, Assembler_mem *mem);
 void announceSyntaxError(char *ERR, Assembler_mem *mem);
 void checkExternSyntax(char *name, char *line, Assembler_mem *mem);
 void checkEntrySyntax(char *name, char *line, Assembler_mem *mem);
-void debugAsm(Assembler_mem *mem);
+void debugAsm(Assembler_mem *mem); /*DEBUG TODELETE*/
+void reCalcDataLabels(Assembler_mem *mem);
 
+
+#define MAX_PROGRAM_LENGTH 8192
 #endif
 
 /*
