@@ -12,10 +12,10 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     InitAssemblerMem(mem);
 
     curr_Line = getLine(src);
-    printf("Line->%s<-\n", curr_Line); /*DEBUG*/
-    while (curr_Line != NULL)          /*loop through the lines*/
+    printf("\n\nLine->%s<-\n", curr_Line); /*DEBUG*/
+    while (curr_Line != NULL)              /*loop through the lines*/
     {
-        printf("Line->%s<-\n", curr_Line);
+        printf("\n\nLine->%s<-\n", curr_Line);
         if (!isCommentLine(curr_Line) && !isOnlyWhiteChars(curr_Line)) /*if its a comment then Ignore the line*/
         {
             /*ToDo add check for line length*/
@@ -82,8 +82,6 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
                     printf("ITS command!\n");
                     handleCommand(curr_Line, mem); /* adds command length to mem->IC*/
                 }
-
-                /*handle insruction*/
             }
         }
         else
@@ -95,6 +93,7 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
         curr_Line = getLine(src); /* get next line in file */
         mem->line_counter++;
     }
+    
 }
 
 void handleDataLine(char *str, Assembler_mem *mem)
@@ -279,7 +278,6 @@ void handleExtern(char *name, char *line, Assembler_mem *mem)
             }
         }
     }
-    printf("done function\n");
 }
 
 void checkExternSyntax(char *name, char *line, Assembler_mem *mem)
@@ -388,9 +386,10 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
 {
     node *temp_label;
     Label *temp_Label_holder = NULL;
-
     char *trimmed_Line, *temp_string, *curr_word;
+
     printf("handlelabel name:->%s<-, line->%s<-\n", name, line);
+
     name[strlen(name) - 1] = END_OF_STRING; /*remove ':' at the end of label name*/
     trimmed_Line = trimAll(line);
     if (!isGoodLabelName(name))
@@ -417,6 +416,7 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                     temp_Label_holder->_value = mem->IC;
                     temp_Label_holder->_base_address = calcBaseAddress(mem->IC);
                     temp_Label_holder->_offset = calcOffsetAddress(mem->IC);
+                    temp_Label_holder->_label_type = INSTRUCTION;
                 }
                 else
                 {
@@ -455,10 +455,11 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                         checkExternSyntax(curr_word, trimmed_Line, mem);
                     }
                 }
+                temp_label = NULL;
+                temp_Label_holder = NULL;
             }
             else /*if not .entry or .extern*/
             {
-                printf("got to second save section with %s\n", name);
                 temp_label = findNode(mem->label_Table, name); /*save label*/
 
                 if (temp_label != NULL)
@@ -508,7 +509,7 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                     else /*then it must be a command*/
                     {
                         temp_label = findNode(mem->label_Table, name); /*find and change type of label to DATA*/
-                        ((Label *)(temp_label->data))->_label_type = DATA;
+                        ((Label *)(temp_label->data))->_label_type = INSTRUCTION;
                         ((Label *)(temp_label->data))->_value = mem->IC;
                         ((Label *)(temp_label->data))->_base_address = calcBaseAddress(mem->IC);
                         ((Label *)(temp_label->data))->_offset = calcOffsetAddress(mem->IC);
@@ -526,27 +527,70 @@ void handleCommand(char *str, Assembler_mem *mem)
     char *mystr = NULL;
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
+        printf("start IC is %d\n", mem->IC);
         mystr = trimAll(str);
         param = getParam(mystr); /*get command name*/
-        
+
         mystr = extractParam(mystr);
-        printf("GOTHERE\n");
         switch (isInstructionName(param))
         {
         case MOV:
-             MOVcountLines(mystr, mem);
+            MOVcountLines(mystr, mem);
             break;
-
+        case CMP:
+            CMPcountLines(mystr, mem);
+            break;
+        case ADD:
+            ADDcountLines(mystr, mem);
+            break;
+        case SUB:
+            SUBcountLines(mystr, mem);
+            break;
+        case LEA:
+            LEAcountLines(mystr, mem);
+            break;
+        case CLR:
+            CLRcountLines(mystr, mem);
+            break;
+        case NOT:
+            NOTcountLines(mystr, mem);
+            break;
+        case INC:
+            INCcountLines(mystr, mem);
+            break;
+        case DEC:
+            DECcountLines(mystr, mem);
+            break;
+        case JMP:
+            JMPcountLines(mystr, mem);
+            break;
+        case BNE:
+            BNEcountLines(mystr, mem);
+            break;
+        case JSR:
+            JSRcountLines(mystr, mem);
+            break;
+        case RED:
+            REDcountLines(mystr, mem);
+            break;
+        case PRN:
+            PRNcountLines(mystr, mem);
+            break;
+        case RTS:
+            RTScountLines(mystr, mem);
+            break;
+        case STOP:
+            STOPcountLines(mystr, mem);
+            break;
         default:
-            printf("DEBUG, bad comman name\n"); /*DEBUG*/
             break;
         }
     }
     else
     {
-        printf(",DEBUG,EERORRRR Empty command\n"); /*DEBUG*/
-        mem->no_Errors = FALSE;                    /*empty line*/
+        mem->no_Errors = FALSE; /*empty line*/
     }
+    printf("curren IC is %d\n", mem->IC);
 }
 /*checks for syntax errors and if there are none then increment mem->IC*/
 

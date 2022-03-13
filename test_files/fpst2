@@ -1,3 +1,2 @@
-gibrish
-label: gibrish
-mov aa
+mov a[r15],a
+

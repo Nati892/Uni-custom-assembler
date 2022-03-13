@@ -4,7 +4,7 @@ void InitAssemblerMem(Assembler_mem *mem)
     mem->no_Errors = 1;
     mem->Data_Image = (int *)malloc(1 * sizeof(int));
     mem->Data_Image_Length = 0;
-    mem->DC = 0;
+    mem->DC = 1;
     mem->IC = 100;
     mem->line_counter = 1;
     mem->no_Errors = 1;

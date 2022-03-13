@@ -38,8 +38,8 @@ char *extractWordFromStart(char *Line);          /*removes the first word from l
 void appendEndLineChar(char *line);              /*appends \n to given string*/
 void appendCharAtEnd(char *line, char toAppend); /*appends char at end of string*/
 int compareStrings(char *a, char *b);            /*compares two strings*/
-int countCommas(char *);                         /*counts the commas at the start of string*/
-void removeComma(char *);                        /*removes first comma in the start of string*/
+int countCommas(char *LinePointer);              /*counts the commas at the start of string*/
+void removeComma(char *);                         /*removes first comma in the start of string*/
 int checkResidualText(char *);                   /*1 for no resdiual text, 0 for more text*/
 int isLastEOF(char *);                           /*checks if line ends with EOF, 1-true \ 0-false*/
 int isOnlyWhiteChars(char *);                    /*checks if line is only full of white chars*/
@@ -62,12 +62,12 @@ int isMacroStart(char *text);           /*checks if word is macro start*/
 int isMacroEnd(char *text);             /*checks if word is macro end*/
 
 /*to be tested*/
-char *getParam(char *Line);        /*this function returned a trimmed version of the first param in line*/
-int isImmediateParam(char *Param); /*checks if recieved param is a of immediate indexing method*/
-char *extractParam(char *str);
-int isDirectParam(char *Param);
-int isIndexParam(char *Param);
-int isRegisterDirectParam(char *Param);
+char *getParam(char *Line);    /*this function returned a trimmed version of the first param in line*/
+char *extractParam(char *str); /*this function removes the first parameter,frees the original string and returns a new one without the param*/
+int isIndextype0(char *Param); /*checks if recieved param is a of immediate indexing method*/
+int isIndextype1(char *Param); /*checks if the recieved param is an direct indexed param*/
+int isIndextype2(char *Param); /*checks if the recieved param is an 'Index' indexed param*/
+int isIndextype3(char *Param); /*checks if the recieved param is an register direct indexed param*/
 
 /*int isImmediate(char* str){}
 int isDirect(char* str){}

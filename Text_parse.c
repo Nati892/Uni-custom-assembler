@@ -382,7 +382,7 @@ int checkResidualText(char *LinePointer)
     int i = 0, result = 1;
     if (LinePointer == NULL)
         return result;
-    while (LinePointer[i] != ENDLINE && LinePointer[i] != EOF)
+    while (LinePointer[i] != ENDLINE && LinePointer[i] != EOF && LinePointer[i] != END_OF_STRING)
     {
         if (!isWhiteChar(LinePointer[i]))
             result = 0;
@@ -466,7 +466,7 @@ int isKeyWord(char *str)
 {
 
     int result = FALSE;
-    if (isInstructionName(str) || isDataLabelDefinition(str) || isStringLabelDefinition(str) || isEntryDefinition(str) || isExternDefinition(str) || isMacroEnd(str) || isMacroStart(str))
+    if (isInstructionName(str) || isDataLabelDefinition(str) || isStringLabelDefinition(str) || isEntryDefinition(str) || isExternDefinition(str) || isMacroEnd(str) || isMacroStart(str) || isRegisterNameInRange(str))
         result = TRUE;
     return result;
 }
@@ -662,7 +662,6 @@ int isGoodLabelName(char *str)
     if (!isalpha(trimmed_str[char_counter]))
     {
         result = 0;
-        printf("bad first letter\n");
     }
     else
     {
@@ -688,6 +687,8 @@ int isGoodLabelName(char *str)
     }
     if (result == 0)
         printf("shitty label name\n");
+    else
+        printf("good label name\n");
     return result;
 }
 /*this function returned a trimmed version of the first param in line*/
@@ -735,51 +736,55 @@ char *extractParam(char *str)
     {
         i++;
     }
-    
-     new_str = (char *)malloc(strlen(str) - i + 1);
+
+    new_str = (char *)malloc(strlen(str) - i + 1);
     new_str[strlen(str) - i] = END_OF_STRING;
     for (j = 0; j < (strlen(str) - i); j++)
     {
         new_str[j] = str[i + j];
     }
     free(str);
-    printf("NEWSTR: ->%s<-\n",new_str);
     return new_str;
 }
 /*checks if the recieved param is an immediate indexed param*/
-int isImmediateParam(char *Param)
+int isIndextype0(char *Param)
 {
     char *trimmedParam = NULL;
+    char *temp;
     int result = FALSE;
     int len = 0;
-
+    printf("isIndextype0 starts with ->%s<-\n", Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmedParam = trimAll(Param);
+        printf("isIndextype0 trimmed param ->%s<-\n", trimmedParam);
+        temp = trimmedParam;
         len = strlen(trimmedParam);
         if (len > 2 && trimmedParam[0] == '#') /*set macro for hash*/
         {
             trimmedParam++; /*advance to first digit*/
-            if (checkIntegerInText(Param))
+            if (checkIntegerInText(trimmedParam))
             {
 
-                if (isIntInRange(getIntegerFromText(Param))) /*check if int is in range of 16 bit numbers*/
+                if (isIntInRange(getIntegerFromText(trimmedParam))) /*check if int is in range of 16 bit numbers*/
                     result = TRUE;
-                free(trimmedParam);
+                /*   free(trimmedParam);*/
             }
         }
-        free(trimmedParam);
+        free(temp);
+        printf("isIndextype0 starts with ->%d<-\n", result);
     }
     return result;
 }
 /*checks if the recieved param is an direct indexed param*/
-int isDirectParam(char *Param)
+int isIndextype1(char *Param)
 {
     int result = FALSE;
     char *trimmed_parm;
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_parm = trimAll(Param);
+        printf("isIndextype1: ->%s<-\n", trimmed_parm);
         if (isGoodLabelName(trimmed_parm))
         {
             result = TRUE;
@@ -789,7 +794,7 @@ int isDirectParam(char *Param)
 }
 
 /*checks if the recieved param is an 'Index' indexed param*/
-int isIndexParam(char *Param)
+int isIndextype2(char *Param)
 {
     int result = TRUE;
     char *trimmed_param;
@@ -802,7 +807,6 @@ int isIndexParam(char *Param)
     }
 
     trimmed_param = trimAll(Param);
-    i = 0;
     while (trimmed_param[i] != END_OF_STRING && !isWhiteChar(trimmed_param[i]) && trimmed_param[i] != '[')
     {
         i++;
@@ -812,10 +816,12 @@ int isIndexParam(char *Param)
     while (j < i)
     {
         temp[j] = trimmed_param[j];
+        j++;
     }
-    if (!isGoodLabelName(temp))
+    if (!isGoodLabelName(temp)) /*checklabel name prior to [rXX]*/
         result = FALSE;
     free(temp);
+
     if (trimmed_param[i] != '[')
         result = FALSE;
     i++;
@@ -828,31 +834,32 @@ int isIndexParam(char *Param)
     }
     else
     {
+
         temp = (char *)malloc(4);
         temp[3] = END_OF_STRING;
         j = 0;
-        while (i < strlen(trimmed_param) - 1)
+        while (j < 3)
         {
-            temp[0] = trimmed_param[j];
+            temp[j] = trimmed_param[j + i];
             j++;
-            i++;
         }
         if (!isRegisterNameInRange(temp))
             result = FALSE;
     }
-
     return result;
 }
 
 /*checks if the recieved param is an register direct indexed param*/
-int isRegisterDirectParam(char *Param)
+int isIndextype3(char *Param)
 {
     char *trimmed_param;
     int result;
+    printf("isIndextype3 started with:->%s<-\n",Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_param = trimAll(Param);
         result = isRegisterNameInRange(trimmed_param);
+        printf("Param->%s<-,is reg name ->%d<-\n", trimmed_param, result);
     }
     return result;
 }

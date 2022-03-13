@@ -11,7 +11,6 @@ enum ARE_FIELD
     E
 };
 
-
 void assemblerFirstPass(FILE *src, Assembler_mem *mem);
 void assemblerSecondPass(FILE *src, Assembler_mem *mem);
 
@@ -33,16 +32,12 @@ void debugAsm(Assembler_mem *mem);
 #endif
 
 /*
-add functions prototypes
-write code for cammand handeling
-write code for label handling
 write code for ext detection when rewriting the commands
 
 write second pass and translation
 
 add files to compilation in end
 
-add struct assembler_mem that will be generated prior to assembler
 
 
 
