@@ -2,7 +2,8 @@
 #define ASSEMBLER_PASS
 #include "Text_parse.h"
 #include "LabelCollect.h"
-
+#include "cmd_handler.h"
+#include "asm_utils.h"
 enum ARE_FIELD
 {
     A,
@@ -10,25 +11,10 @@ enum ARE_FIELD
     E
 };
 
-/*this struct represents all the memory needed for the assembler to operate*/
-typedef struct
-{
-    int no_Errors;
-    int DC;
-    int IC;
-    int line_counter;
-    int *Data_Image; /*int array, both numbers and characters are converted to numbers in the end, so its beter*/
-    int Data_Image_Length;
-    char *String_Image;
-    node *label_Table;
-    node *ext_file_table; /*used in second pass*/
-} Assembler_mem;
 
 void assemblerFirstPass(FILE *src, Assembler_mem *mem);
 void assemblerSecondPass(FILE *src, Assembler_mem *mem);
-void InitAssemblerMem(Assembler_mem *mem);
-void restartAssemblerMem(Assembler_mem *mem);
-void freeAssemblerMem(Assembler_mem *mem);
+
 /*int ResetAssembler() {} */ /*to implement in future for more then one input file*/
 
 /*helper methods for the main two big methods*/

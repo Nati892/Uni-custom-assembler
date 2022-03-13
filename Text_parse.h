@@ -25,7 +25,7 @@ enum instructions
     RTS,
     STOP
 };
-int isInstructionName(char *str);
+int isInstructionName(char *str);                /*if its an instruction name then returns the enum type of it,else returns FALSE*/
 char *getLine(FILE *file);                       /*returns NULL if line only holds EOF or holds nothing*/
 char *initString();                              /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
 char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
@@ -65,11 +65,11 @@ int isMacroEnd(char *text);             /*checks if word is macro end*/
 char *getParam(char *Line);        /*this function returned a trimmed version of the first param in line*/
 int isImmediateParam(char *Param); /*checks if recieved param is a of immediate indexing method*/
 char *extractParam(char *str);
-int isDiractParam(char *Param);
+int isDirectParam(char *Param);
 int isIndexParam(char *Param);
 int isRegisterDirectParam(char *Param);
 
-/*int isImmediate(char* str){} 
+/*int isImmediate(char* str){}
 int isDirect(char* str){}
 int isIndex(char* str){}
 int isRegisterDirect(char* str){}*/

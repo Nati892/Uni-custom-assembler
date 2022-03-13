@@ -691,6 +691,8 @@ int isGoodLabelName(char *str)
     return result;
 }
 /*this function returned a trimmed version of the first param in line*/
+
+/*this function returns the first parameter in line, if there isnt one then it returns NULL*/
 char *getParam(char *Line)
 {
     char *temp_param = NULL;
@@ -720,6 +722,7 @@ char *getParam(char *Line)
     return returned_parm;
 }
 
+/*this function removes the first parameter,frees the original string and returns a new one without the param*/
 char *extractParam(char *str)
 {
     int i = 0, j = 0;
@@ -732,22 +735,24 @@ char *extractParam(char *str)
     {
         i++;
     }
-    new_str = (char *)malloc(strlen(str) - i);
-    new_str[strlen(str) - i - 1] = END_OF_STRING;
-    for (j = 0; j < (strlen(str) - i - 1); j++)
+    
+     new_str = (char *)malloc(strlen(str) - i + 1);
+    new_str[strlen(str) - i] = END_OF_STRING;
+    for (j = 0; j < (strlen(str) - i); j++)
     {
         new_str[j] = str[i + j];
     }
     free(str);
+    printf("NEWSTR: ->%s<-\n",new_str);
     return new_str;
 }
-
+/*checks if the recieved param is an immediate indexed param*/
 int isImmediateParam(char *Param)
 {
     char *trimmedParam = NULL;
     int result = FALSE;
     int len = 0;
-    char *integer_to_check;
+
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmedParam = trimAll(Param);
@@ -757,10 +762,9 @@ int isImmediateParam(char *Param)
             trimmedParam++; /*advance to first digit*/
             if (checkIntegerInText(Param))
             {
-                integer_to_check = getIntegerFromText(Param); /*get int text*/
-                if (isIntInRange(atoi(integer_to_check)))     /*check if int is in range of 16 bit numbers*/
+
+                if (isIntInRange(getIntegerFromText(Param))) /*check if int is in range of 16 bit numbers*/
                     result = TRUE;
-                free(integer_to_check);
                 free(trimmedParam);
             }
         }
@@ -768,12 +772,12 @@ int isImmediateParam(char *Param)
     }
     return result;
 }
-
-int isDiractParam(char *Param)
+/*checks if the recieved param is an direct indexed param*/
+int isDirectParam(char *Param)
 {
     int result = FALSE;
     char *trimmed_parm;
-    if (Param != NULL & !isOnlyWhiteChars(Param))
+    if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_parm = trimAll(Param);
         if (isGoodLabelName(trimmed_parm))
@@ -784,6 +788,7 @@ int isDiractParam(char *Param)
     return result;
 }
 
+/*checks if the recieved param is an 'Index' indexed param*/
 int isIndexParam(char *Param)
 {
     int result = TRUE;
@@ -839,6 +844,7 @@ int isIndexParam(char *Param)
     return result;
 }
 
+/*checks if the recieved param is an register direct indexed param*/
 int isRegisterDirectParam(char *Param)
 {
     char *trimmed_param;
