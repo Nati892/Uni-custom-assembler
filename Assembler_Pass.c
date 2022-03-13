@@ -12,13 +12,12 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     InitAssemblerMem(mem);
 
     curr_Line = getLine(src);
-    printf("\n\nLine->%s<-\n", curr_Line); /*DEBUG*/
-    while (curr_Line != NULL)              /*loop through the lines*/
+    while (curr_Line != NULL) /*loop through the lines*/
     {
-        printf("\n\nLine->%s<-\n", curr_Line);
         if (!isCommentLine(curr_Line) && !isOnlyWhiteChars(curr_Line)) /*if its a comment then Ignore the line*/
         {
-            /*ToDo add check for line length*/
+            if (strlen(curr_Line) > MAX_Line_LENGTH)
+                announceSyntaxError("Line is too long! max length is 80 characters.", mem);
 
             curr_Word = getTrimmedWordFromLine(curr_Line);
             if (isEntryDefinition(curr_Word) || isExternDefinition(curr_Word) || isDataLabelDefinition(curr_Word) || isStringLabelDefinition(curr_Word))
@@ -26,19 +25,16 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
                 /*handle special lables, no instructions handling needed here*/
                 if (isExternDefinition(curr_Word)) /*handle Extern def */
                 {
-                    printf("ITS extern!\n");
                     free(curr_Word);
                     curr_Line = extractWordFromStart(curr_Line);
                     curr_Word = getTrimmedWordFromLine(curr_Line); /*get name of label*/
 
                     handleExtern(curr_Word, curr_Line, mem);
-                    printf("done extern\n");
                 }
                 else
                 {
                     if (isEntryDefinition(curr_Word)) /*handle entry def*/
                     {
-                        printf("ITS entry!\n");
                         free(curr_Word);
                         curr_Line = extractWordFromStart(curr_Line);
                         curr_Word = getTrimmedWordFromLine(curr_Line); /*get name of label*/
@@ -49,7 +45,6 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
                     {
                         if (isDataLabelDefinition(curr_Word)) /*handle .data array*/
                         {
-                            printf("ITS data!\n");
                             free(curr_Word);
                             curr_Line = extractWordFromStart(curr_Line);
                             handleDataLine(curr_Line, mem); /*ToDo*/
@@ -59,7 +54,6 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
                         {
                             if (isStringLabelDefinition(curr_Word)) /*handle String array*/
                             {
-                                printf("ITS string!\n");
                                 free(curr_Word);
                                 curr_Line = extractWordFromStart(curr_Line);
                                 handleStringLine(curr_Line, mem); /*ToDo*/
@@ -73,13 +67,11 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
             {
                 if (isLabelDefinition(curr_Word))
                 {
-                    printf("ITS label!\n");
                     handleLabel(curr_Word, curr_Line, mem); /*handles options for .data .string .entry .extern and possible command*/
                 }
                 else
                 {
                     free(curr_Word);
-                    printf("ITS command!\n");
                     handleCommand(curr_Line, mem); /* adds command length to mem->IC*/
                 }
             }
@@ -94,7 +86,7 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
         mem->line_counter++;
     }
     if ((mem->IC + mem->DC) > MAX_PROGRAM_LENGTH)
-        announceSyntaxError("program two long, max legnth is 8092 lines!",mem);
+        announceSyntaxError("program two long, max legnth is 8092 lines!", mem);
     if (mem->no_Errors)
     {
         reCalcDataLabels(mem);
@@ -109,7 +101,6 @@ void handleDataLine(char *str, Assembler_mem *mem)
 
     trimmedLine = trimAll(str);
 
-    printf(".data: got line->%s<-\n", str);
     if (trimmedLine == NULL)
     {
         announceSyntaxError("no input after .data decleration.", mem);
@@ -118,7 +109,6 @@ void handleDataLine(char *str, Assembler_mem *mem)
     if (isOnlyWhiteChars(trimmedLine)) /*check for an empty line after .data*/
     {
         announceSyntaxError("no input after .data decleration.", mem);
-        printf("blat empty line\n");
         is_good_data = FALSE;
     }
 
@@ -195,7 +185,6 @@ void handleStringLine(char *str, Assembler_mem *mem)
     int i = 0;
     char *trimmedLine = trimAll(str);
 
-    printf(".string: got line->%s<-\n", str);
     if (trimmedLine[i] != QUOTATION_MARK)
     {
         announceSyntaxError("no quotes at start.", mem);
@@ -243,7 +232,6 @@ void handleExtern(char *name, char *line, Assembler_mem *mem)
 {
     char *temp = NULL;
     node *currLabel;
-    printf("handleExtern name:->%s<-, line->%s<-\n", name, line);
     if (name == NULL)
     {
         announceSyntaxError("missing label name after \".extern\" .", mem);
@@ -393,8 +381,6 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
     Label *temp_Label_holder = NULL;
     char *trimmed_Line, *temp_string, *curr_word;
 
-    printf("handlelabel name:->%s<-, line->%s<-\n", name, line);
-
     name[strlen(name) - 1] = END_OF_STRING; /*remove ':' at the end of label name*/
     trimmed_Line = trimAll(line);
     if (!isGoodLabelName(name))
@@ -414,7 +400,6 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
             temp_label = findNode(mem->label_Table, name);
             if (temp_label != NULL)
             {
-                printf("label %s already exists\n", name);
                 if (temp_Label_holder->_attrib_extern != TRUE)
                 {
                     temp_Label_holder = (Label *)temp_label->data;
@@ -430,20 +415,17 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
             }
             else
             {
-                printf("saving labellll %s\n", name);
                 storeLable(mem->label_Table, name, FALSE, UNDEF, INSTRUCTION, mem->IC, calcBaseAddress(mem->IC), calcOffsetAddress(mem->IC));
             }
         }
         else
         {
             curr_word = getTrimmedWordFromLine(trimmed_Line);
-            printf("word after label def is ->%s<-\n", curr_word);
             /*check syntax for entry and extern, there is no need to save label in this case*/
             if (isExternDefinition(curr_word) || isEntryDefinition(curr_word))
             {
                 if (isEntryDefinition(curr_word))
                 {
-                    printf("its entry def\n");
                     free(curr_word);
                     trimmed_Line = extractWordFromStart(trimmed_Line);
                     curr_word = getTrimmedWordFromLine(trimmed_Line);
@@ -453,7 +435,6 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                 {
                     if (isExternDefinition(curr_word))
                     {
-                        printf("its extern def\n");
                         free(curr_word);
                         trimmed_Line = extractWordFromStart(trimmed_Line);
                         curr_word = getTrimmedWordFromLine(trimmed_Line);
@@ -487,12 +468,10 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                 else
                 { /*if its not already defined then create label*/
                     storeLable(mem->label_Table, name, FALSE, UNDEF, INSTRUCTION, UNDEF, UNDEF, UNDEF);
-                    printf("saved %s\n", name);
                 }
 
                 if (isDataLabelDefinition(curr_word)) /*if its a .data line*/
                 {
-                    printf("its .data def\n");
                     temp_label = findNode(mem->label_Table, name); /*find and change type of label to DATA*/
                     ((Label *)(temp_label->data))->_label_type = DATA;
                     ((Label *)(temp_label->data))->_value = mem->DC; /*the base and offset will be calcualted in the start of the second pass*/
@@ -532,7 +511,6 @@ void handleCommand(char *str, Assembler_mem *mem)
     char *mystr = NULL;
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
-        printf("start IC is %d\n", mem->IC);
         mystr = trimAll(str);
         param = getParam(mystr); /*get command name*/
 
@@ -595,7 +573,6 @@ void handleCommand(char *str, Assembler_mem *mem)
     {
         mem->no_Errors = FALSE; /*empty line*/
     }
-    printf("curren IC is %d\n", mem->IC);
 }
 /*checks for syntax errors and if there are none then increment mem->IC*/
 
@@ -604,12 +581,6 @@ void addToDataImage(int num, Assembler_mem *mem)
     mem->Data_Image_Length++;
     mem->Data_Image = realloc(mem->Data_Image, mem->Data_Image_Length * sizeof(int));
     mem->Data_Image[mem->Data_Image_Length - 1] = num;
-}
-
-void announceSyntaxError(char *ERR, Assembler_mem *mem)
-{
-    mem->no_Errors = FALSE;
-    printf("ERROR in line %d: %s\n", mem->line_counter, ERR);
 }
 
 void debugAsm(Assembler_mem *mem)
@@ -637,9 +608,9 @@ void reCalcDataLabels(Assembler_mem *mem)
         if (label_table->key != NULL)
         {
             curr_label = ((Label *)(label_table->data));
-            if (curr_label->_label_type = DATA)
+            if (curr_label->_label_type == DATA)
             {
-                curr_label->_value = curr_label->_value + mem->IC;
+                curr_label->_value = curr_label->_value + mem->IC - 1;
                 curr_label->_base_address = calcBaseAddress(curr_label->_value);
                 curr_label->_offset = calcOffsetAddress(curr_label->_value);
             }

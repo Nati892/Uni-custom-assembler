@@ -656,7 +656,6 @@ int isGoodLabelName(char *str)
     {
         return 0;
     }
-    printf("checking label name->%s<-\n", str);
     trimmed_str = trimAll(str);
     /*make sure that first letter is alphanumeric*/
     if (!isalpha(trimmed_str[char_counter]))
@@ -685,10 +684,7 @@ int isGoodLabelName(char *str)
 
         free(trimmed_str);
     }
-    if (result == 0)
-        printf("shitty label name\n");
-    else
-        printf("good label name\n");
+   
     return result;
 }
 /*this function returned a trimmed version of the first param in line*/
@@ -753,11 +749,9 @@ int isIndextype0(char *Param)
     char *temp;
     int result = FALSE;
     int len = 0;
-    printf("isIndextype0 starts with ->%s<-\n", Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmedParam = trimAll(Param);
-        printf("isIndextype0 trimmed param ->%s<-\n", trimmedParam);
         temp = trimmedParam;
         len = strlen(trimmedParam);
         if (len > 2 && trimmedParam[0] == '#') /*set macro for hash*/
@@ -772,7 +766,6 @@ int isIndextype0(char *Param)
             }
         }
         free(temp);
-        printf("isIndextype0 starts with ->%d<-\n", result);
     }
     return result;
 }
@@ -784,7 +777,6 @@ int isIndextype1(char *Param)
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_parm = trimAll(Param);
-        printf("isIndextype1: ->%s<-\n", trimmed_parm);
         if (isGoodLabelName(trimmed_parm))
         {
             result = TRUE;
@@ -854,12 +846,10 @@ int isIndextype3(char *Param)
 {
     char *trimmed_param;
     int result;
-    printf("isIndextype3 started with:->%s<-\n",Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_param = trimAll(Param);
         result = isRegisterNameInRange(trimmed_param);
-        printf("Param->%s<-,is reg name ->%d<-\n", trimmed_param, result);
     }
     return result;
 }

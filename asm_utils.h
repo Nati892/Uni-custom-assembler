@@ -20,6 +20,8 @@ typedef struct
 void InitAssemblerMem(Assembler_mem *mem);
 void restartAssemblerMem(Assembler_mem *mem);
 void freeAssemblerMem(Assembler_mem *mem);
+void announceSyntaxError(char *ERR, Assembler_mem *mem);
+
 
 
 #endif

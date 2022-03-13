@@ -16,10 +16,12 @@ void MOVcountLines(char *str, Assembler_mem *mem)
         if (checkResidualText(trimmed_str)) /**/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("missing parameter", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("comma after Instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -50,6 +52,7 @@ void MOVcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad parameter", mem);
                         }
                     }
                 }
@@ -60,9 +63,10 @@ void MOVcountLines(char *str, Assembler_mem *mem)
         if (isGoodLine && countCommas(trimmed_str) == 1) /*cehck comma and second param*/
         {
             removeComma(trimmed_str);
-            if (checkResidualText(trimmed_str)) /*check there is a second param after comma*/
+            if (checkResidualText(trimmed_str)) /*check if there is a second param after comma*/
             {
                 isGoodLine = FALSE;
+                announceSyntaxError("missing second parameter", mem);
             }
             else
             {
@@ -87,6 +91,7 @@ void MOVcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad paramter", mem);
                         }
                     }
                 }
@@ -96,17 +101,26 @@ void MOVcountLines(char *str, Assembler_mem *mem)
         else
         {
             isGoodLine = FALSE;
+            if (countCommas(str) > 1)
+            {
+                announceSyntaxError("too many commas", mem);
+            }
+            else
+            {
+                if (countCommas(str) == 0)
+                    announceSyntaxError("missing comma", mem);
+            }
         }
 
-        if (!checkResidualText(trimmed_str)) /*extranious text*/
+        if (!checkResidualText(trimmed_str)) /*extraneous text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text after command", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -117,7 +131,6 @@ void CMPcountLines(char *str, Assembler_mem *mem)
     int lineCounter = 2; /*minmum lines for command with params*/
     char *trimmed_str = NULL;
     char *param = NULL;
-    printf("CMPountLines string->%s<-\n", str);
 
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
@@ -125,13 +138,15 @@ void CMPcountLines(char *str, Assembler_mem *mem)
         isGoodLine = TRUE;
         trimmed_str = trimAll(str);
 
-        if (checkResidualText(trimmed_str)) /**/
+        if (checkResidualText(trimmed_str)) /*if empty line*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("missing first parameter", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("comma right after instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -162,6 +177,7 @@ void CMPcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad parameter", mem);
                         }
                     }
                 }
@@ -175,6 +191,7 @@ void CMPcountLines(char *str, Assembler_mem *mem)
             if (checkResidualText(trimmed_str)) /*check there is a second param after comma*/
             {
                 isGoodLine = FALSE;
+                announceSyntaxError("Missing second parameter", mem);
             }
             else
             {
@@ -205,6 +222,7 @@ void CMPcountLines(char *str, Assembler_mem *mem)
                             else
                             {
                                 isGoodLine = FALSE;
+                                announceSyntaxError("Bad parameter", mem);
                             }
                         }
                     }
@@ -215,17 +233,26 @@ void CMPcountLines(char *str, Assembler_mem *mem)
         else
         {
             isGoodLine = FALSE;
+            if (countCommas(str) > 1)
+            {
+                announceSyntaxError("too many commas", mem);
+            }
+            else
+            {
+                if (countCommas(str) == 0)
+                    announceSyntaxError("missing comma", mem);
+            }
         }
 
         if (!checkResidualText(trimmed_str)) /*extranious text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text after command", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -243,7 +270,6 @@ void LEAcountLines(char *str, Assembler_mem *mem)
     int lineCounter = 2; /*minmum lines for command with params*/
     char *trimmed_str = NULL;
     char *param = NULL;
-    printf("LEAcountLines string->%s<-\n", str);
 
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
@@ -254,10 +280,12 @@ void LEAcountLines(char *str, Assembler_mem *mem)
         if (checkResidualText(trimmed_str)) /**/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Missing first parameter", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Comma right after Instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -276,6 +304,7 @@ void LEAcountLines(char *str, Assembler_mem *mem)
                 else
                 {
                     isGoodLine = FALSE;
+                    announceSyntaxError("Bad parameter", mem);
                 }
             }
         }
@@ -287,6 +316,7 @@ void LEAcountLines(char *str, Assembler_mem *mem)
             if (checkResidualText(trimmed_str)) /*check there is a second param after comma*/
             {
                 isGoodLine = FALSE;
+                announceSyntaxError("missing second parameter", mem);
             }
             else
             {
@@ -311,6 +341,7 @@ void LEAcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad command", mem);
                         }
                     }
                 }
@@ -320,17 +351,26 @@ void LEAcountLines(char *str, Assembler_mem *mem)
         else
         {
             isGoodLine = FALSE;
+            if (countCommas(str) > 1)
+            {
+                announceSyntaxError("too many commas", mem);
+            }
+            else
+            {
+                if (countCommas(str) == 0)
+                    announceSyntaxError("missing comma", mem);
+            }
         }
 
         if (!checkResidualText(trimmed_str)) /*extranious text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text after command", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -340,7 +380,6 @@ void CLRcountLines(char *str, Assembler_mem *mem)
     int lineCounter = 2; /*minmum lines for command with params*/
     char *trimmed_str = NULL;
     char *param = NULL;
-    printf("CMPountLines string->%s<-\n", str);
 
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
@@ -351,10 +390,12 @@ void CLRcountLines(char *str, Assembler_mem *mem)
         if (checkResidualText(trimmed_str)) /**/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Missing first parameter", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Comma right after Instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -385,6 +426,7 @@ void CLRcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad parameter", mem);
                         }
                     }
                 }
@@ -395,12 +437,12 @@ void CLRcountLines(char *str, Assembler_mem *mem)
         if (!checkResidualText(trimmed_str)) /*extranious text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("extraneous text at end of command", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -432,10 +474,12 @@ void JMPcountLines(char *str, Assembler_mem *mem)
         if (checkResidualText(trimmed_str)) /**/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Missing first parameter", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Comma right after Instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -454,6 +498,7 @@ void JMPcountLines(char *str, Assembler_mem *mem)
                 else
                 {
                     isGoodLine = FALSE;
+                    announceSyntaxError("Bad parameter", mem);
                 }
             }
         }
@@ -462,12 +507,12 @@ void JMPcountLines(char *str, Assembler_mem *mem)
         if (!checkResidualText(trimmed_str)) /*extranious text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text at end of Line", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -492,13 +537,15 @@ void REDcountLines(char *str, Assembler_mem *mem)
         isGoodLine = TRUE;
         trimmed_str = trimAll(str);
 
-        if (checkResidualText(trimmed_str)) /**/
+        if (checkResidualText(trimmed_str)) /*make sure there is a first param*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Missing first param", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Comma right after Instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -523,21 +570,22 @@ void REDcountLines(char *str, Assembler_mem *mem)
                     else
                     {
                         isGoodLine = FALSE;
+                        announceSyntaxError("Bad parameter", mem);
                     }
                 }
             }
         }
 
         free(param);
-        if (!checkResidualText(trimmed_str)) /*extranious text*/
+        if (!checkResidualText(trimmed_str)) /*extraneous text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text in end of line", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -553,13 +601,15 @@ void PRNcountLines(char *str, Assembler_mem *mem)
         isGoodLine = TRUE;
         trimmed_str = trimAll(str);
 
-        if (checkResidualText(trimmed_str)) /**/
+        if (checkResidualText(trimmed_str)) /*check existence of first param*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Missing first param", mem);
         }
         if (countCommas(str) != 0 && isGoodLine) /*make sure there arent any commas at start*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Commad right after instruction name", mem);
         }
         if (isGoodLine) /*get first param*/
         {
@@ -591,6 +641,7 @@ void PRNcountLines(char *str, Assembler_mem *mem)
                         else
                         {
                             isGoodLine = FALSE;
+                            announceSyntaxError("Bad command", mem);
                         }
                     }
                 }
@@ -601,12 +652,12 @@ void PRNcountLines(char *str, Assembler_mem *mem)
         if (!checkResidualText(trimmed_str)) /*extranious text*/
         {
             isGoodLine = FALSE;
+            announceSyntaxError("Extraneous text at end of line", mem);
         }
 
         if (isGoodLine && mem->no_Errors)
             mem->IC += lineCounter;
     }
-    printf("is Good command syntax:%d\n", isGoodLine);
     if (!isGoodLine)
         mem->no_Errors = FALSE;
 }
@@ -614,6 +665,10 @@ void RTScountLines(char *str, Assembler_mem *mem)
 {
     if (checkResidualText(str))
         mem->IC++;
+    else
+    {
+        announceSyntaxError("Extraneous text at end of line", mem);
+    }
 }
 void STOPcountLines(char *str, Assembler_mem *mem)
 {

@@ -35,3 +35,9 @@ void freeAssemblerMem(Assembler_mem *mem)
     free(mem->String_Image);
     free(mem);
 }
+
+void announceSyntaxError(char *ERR, Assembler_mem *mem)
+{
+    mem->no_Errors = FALSE;
+    printf("ERROR in line %d:: %s\n", mem->line_counter, ERR);
+}
