@@ -17,3 +17,7 @@ ent2:
 	be
 	extern:extern:
 	labell: .extern lab
+	
+
+	cmp 2d 22e 2ee
+	en5: clr adad dw2 2

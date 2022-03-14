@@ -143,10 +143,14 @@ void doSomthingToFile(FILE *file, char *path)
 
     else
     {
-        fseek(file,0,SEEK_SET);
+        fseek(file, 0, SEEK_SET);
         macroStage(file, path);
-        mem = (Assembler_mem *)malloc(sizeof(Assembler_mem));
-        assemblerFirstPass(file, mem);  
+        mem = InitAssemblerMem();
+        assemblerFirstPass(file, mem);
+        if (mem->no_Errors == TRUE)
+        {
+            assemblerSecondPass(file, mem);
+        }
         debugAsm(mem);
         freeAssemblerMem(mem);
     }

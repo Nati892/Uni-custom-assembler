@@ -9,17 +9,17 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     And all the labels will be collected*/
     char *curr_Line, *curr_Word;
     fseek(src, 0, SEEK_SET); /*set file read point to start*/
-    InitAssemblerMem(mem);
-
     curr_Line = getLine(src);
     while (curr_Line != NULL) /*loop through the lines*/
     {
+        printf("falling in line %d\n", mem->line_counter);
         if (!isCommentLine(curr_Line) && !isOnlyWhiteChars(curr_Line)) /*if its a comment then Ignore the line*/
         {
             if (strlen(curr_Line) > MAX_Line_LENGTH)
                 announceSyntaxError("Line is too long! max length is 80 characters.", mem);
 
             curr_Word = getTrimmedWordFromLine(curr_Line);
+
             if (isEntryDefinition(curr_Word) || isExternDefinition(curr_Word) || isDataLabelDefinition(curr_Word) || isStringLabelDefinition(curr_Word))
             {
                 /*handle special lables, no instructions handling needed here*/
@@ -65,12 +65,14 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
             }
             else /*if just an instruction or label and then .data/.string*/
             {
+
                 if (isLabelDefinition(curr_Word))
                 {
                     handleLabel(curr_Word, curr_Line, mem); /*handles options for .data .string .entry .extern and possible command*/
                 }
                 else
                 {
+
                     free(curr_Word);
                     handleCommand(curr_Line, mem); /* adds command length to mem->IC*/
                 }
@@ -87,16 +89,22 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     }
     if ((mem->IC + mem->DC) > MAX_PROGRAM_LENGTH)
         announceSyntaxError("program two long, max legnth is 8092 lines!", mem);
+
+    checkEntryLables(mem);  /*make sure there arent any entry lables that are not defined*/
+    checkExternExists(mem); /*make sure there arent any labels used that dont exist */
+
     if (mem->no_Errors)
     {
-        reCalcDataLabels(mem);
+        reCalcLabels(mem);
     }
 }
 
-/*the second pass is called knowing there arent any errors in the first pass*/
+/*the second pass is called knowing there arent any errors in the first pass,
+the second pass can only detect error of a non-existent extern label*/
 void assemblerSecondPass(FILE *src, Assembler_mem *mem)
 {
     char *curr_Line, *curr_Word;
+    printf("**started second pass **\n");
     fseek(src, 0, SEEK_SET); /*set file read point to start*/
     mem->line_counter = 0;
 
@@ -110,18 +118,24 @@ void assemblerSecondPass(FILE *src, Assembler_mem *mem)
             if (isLabelDefinition(curr_Word))
             {
                 free(curr_Word);
+                curr_Line = extractWordFromStart(curr_Line);
                 curr_Word = getTrimmedWordFromLine(curr_Line);
             }
             if (isInstructionName(curr_Word) != FALSE)
                 SpreadCommand(curr_Line, mem); /* adds command length to mem->IC*/
 
             if (curr_Word != NULL)
+            {
                 free(curr_Word);
+                curr_Word = NULL;
+            }
         }
-
-        free(curr_Line);
+        if (curr_Line != NULL)
+            free(curr_Line);
         curr_Line = getLine(src);
+        mem->line_counter++;
     }
+    printf("\n\n**finished second pass **\n");
 }
 
 void handleDataLine(char *str, Assembler_mem *mem)
@@ -384,10 +398,10 @@ void handleEntry(char *name, char *line, Assembler_mem *mem)
             else
             {
                 currLabel = findNode(mem->label_Table, name);
-                if (currLabel == NULL)
+                if (currLabel == NULL) /*if doesnt exist yet then create*/
                 {
-                    storeLable(mem->label_Table, name, FALSE, TRUE, UNDEF, UNDEF, UNDEF, UNDEF);
-                    /**/
+                    storeLable(mem->label_Table, name, FALSE, TRUE, UNDEF, mem->line_counter, UNDEF, UNDEF);
+                    /*save line num for error checking in the end*/
                 }
                 else
                 {
@@ -397,7 +411,7 @@ void handleEntry(char *name, char *line, Assembler_mem *mem)
                         free(name);
                     }
                     else
-                    {
+                    { /*if exists then update to .entry*/
                         ((Label *)currLabel->data)->_attrib_entry = TRUE;
                     }
                 }
@@ -423,10 +437,12 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
 
         temp_string = extractWordFromStart(trimmed_Line);
         if (!isOnlyWhiteChars(temp_string))
+        {
             trimmed_Line = trimAll(temp_string);
+        }
         free(temp_string);
-
-        if (trimmed_Line == NULL || strlen(trimmed_Line) == 0) /*if its an empty line*/
+        temp_string = NULL;
+        if (trimmed_Line == NULL || strlen(trimmed_Line) == 0) /*if its an empty line,then save label*/
         {
             temp_label = findNode(mem->label_Table, name);
             if (temp_label != NULL)
@@ -484,7 +500,7 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                     temp_Label_holder = (Label *)temp_label->data;
 
                     /*if a label already exits it can only be entry and UNDEF*/
-                    if (temp_Label_holder->_attrib_entry == TRUE && temp_Label_holder->_value == UNDEF)
+                    if (temp_Label_holder->_attrib_entry == TRUE && temp_Label_holder->_label_type == UNDEF)
                     {
                         temp_Label_holder = (Label *)temp_label->data;
                         temp_Label_holder->_value = mem->IC;
@@ -540,12 +556,15 @@ void handleCommand(char *str, Assembler_mem *mem)
 {
     char *param = NULL;
     char *mystr = NULL;
-    if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
+
+    if (str != NULL && !isOnlyWhiteChars(str))
     {
+
         mystr = trimAll(str);
         param = getParam(mystr); /*get command name*/
 
         mystr = extractParam(mystr);
+
         switch (isInstructionName(param))
         {
         case MOV:
@@ -596,7 +615,8 @@ void handleCommand(char *str, Assembler_mem *mem)
         case STOP:
             STOPcountLines(mystr, mem);
             break;
-        default:
+        case UNKNOWN:
+            announceSyntaxError("unknown command.", mem);
             break;
         }
     }
@@ -629,7 +649,7 @@ void debugAsm(Assembler_mem *mem)
     printLables(mem->label_Table);
 }
 
-void reCalcDataLabels(Assembler_mem *mem)
+void reCalcLabels(Assembler_mem *mem)
 {
 
     node *label_table = mem->label_Table;
@@ -645,18 +665,37 @@ void reCalcDataLabels(Assembler_mem *mem)
                 curr_label->_base_address = calcBaseAddress(curr_label->_value);
                 curr_label->_offset = calcOffsetAddress(curr_label->_value);
             }
-            label_table = label_table->next;
         }
+        label_table = label_table->next;
+    }
+}
+
+/*search entry labels that have not really been intialized in file*/
+void checkEntryLables(Assembler_mem *mem)
+{
+    node *label_table = mem->label_Table;
+    Label *curr_label;
+    while (label_table != NULL)
+    {
+        if (label_table->key != NULL)
+        {
+            curr_label = ((Label *)(label_table->data));
+            if (curr_label->_attrib_entry == TRUE && curr_label->_label_type == UNDEF)
+            {
+                announceSyntaxErrorAtLine("entry label not defined in code", curr_label->_value, mem);
+            }
+        }
+        label_table = label_table->next;
     }
 }
 
 void SpreadCommand(char *str, Assembler_mem *mem)
 {
-    char *word, *new_str;
-    word = getTrimmedWordFromLine(str);
+    char *cmd_name, *new_str;
+    cmd_name = getTrimmedWordFromLine(str);
     new_str = trimAll(str);
     new_str = extractWordFromStart(new_str);
-    switch (isInstructionName(str))
+    switch (isInstructionName(cmd_name))
     {
     case MOV:
         MOVtranslate(new_str, mem);
@@ -711,3 +750,24 @@ void SpreadCommand(char *str, Assembler_mem *mem)
     }
 }
 
+/*search from used lables, for lables that have not been announced*/
+void checkExternExists(Assembler_mem *mem)
+{
+    node *label_name, *CollectedLabel;
+    char *trimmedNameToSearch;
+    label_name = mem->ext_labels;
+    while (label_name != NULL)
+    {
+        if (label_name->key != NULL)
+        {
+            trimmedNameToSearch = trimAll(label_name->key);
+            if (findNode(mem->label_Table, trimmedNameToSearch) == NULL)
+            {
+                announceSyntaxErrorAtLine("unkown label name.", *((int *)(label_name->data)), mem);
+            }
+            free(trimmedNameToSearch);
+        }
+
+        label_name = label_name->next;
+    }
+}

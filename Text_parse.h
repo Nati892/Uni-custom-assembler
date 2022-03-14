@@ -7,7 +7,7 @@
 #include <ctype.h>
 
 enum instructions
-{
+{   UNKNOWN=0,
     MOV = 2,
     CMP,
     ADD,
@@ -64,10 +64,6 @@ int isMacroEnd(char *text);             /*checks if word is macro end*/
 /*to be tested*/
 char *getParam(char *Line);    /*this function returned a trimmed version of the first param in line*/
 char *extractParam(char *str); /*this function removes the first parameter,frees the original string and returns a new one without the param*/
-int isIndextype0(char *Param); /*checks if recieved param is a of immediate indexing method*/
-int isIndextype1(char *Param); /*checks if the recieved param is an direct indexed param*/
-int isIndextype2(char *Param); /*checks if the recieved param is an 'Index' indexed param*/
-int isIndextype3(char *Param); /*checks if the recieved param is an register direct indexed param*/
 
 /*int isImmediate(char* str){}
 int isDirect(char* str){}

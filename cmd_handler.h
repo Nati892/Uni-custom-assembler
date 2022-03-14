@@ -43,4 +43,33 @@ void STOPtranslate(char *str, Assembler_mem *mem);
 #define INDEX_TYPE_1_NUM_LINES 2
 #define INDEX_TYPE_2_NUM_LINES 2
 #define INDEX_TYPE_3_NUM_LINES 0
+
+#define MOV_OPCODE 0
+#define CMP_OPCODE 1
+#define ADD_OPCODE 2
+#define SUB_OPCODE 2
+#define LEA_OPCODE 4
+#define CLR_OPCODE 5
+#define NOT_OPCODE 5
+#define INC_OPCODE 5
+#define DEC_OPCODE 5
+#define JMP_OPCODE 9
+#define BNE_OPCODE 9
+#define JSR_OPCODE 9
+#define RED_OPCODE 12
+#define PRN_OPCODE 13
+#define RTS_OPCODE 14
+#define STOP_OPCODE 15
+
+#define ADD_FUNCT 10
+#define SUB_FUNCT 11
+#define CLR_FUNCT 10
+#define NOT_FUNCT 11
+#define INC_FUNCT 12
+#define DEC_FUNCT 13
+#define JMP_FUNCT 10
+#define BNE_FUNCT 11
+#define JSR_FUNCT 12
+#define NO_FUNCT 0
+
 #endif

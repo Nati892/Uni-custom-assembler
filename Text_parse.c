@@ -6,7 +6,7 @@ the function returns NULL if line only holds EOF or holds nothing.
 
 int isInstructionName(char *str) /*if its an instruction name then returns the enum type of it,else returns FALSE*/
 {
-    int result = FALSE;
+    int result = UNKNOWN;
     if (str != NULL)
     {
         if (!strcmp(str, "mov"))
@@ -155,7 +155,7 @@ char *trimAll(char *text)
 
     char *trimmed_text, *temp;
     int i, j, text_length;
-    if (text == NULL)
+    if (text == NULL || isOnlyWhiteChars(text))
     {
         return NULL;
     }
@@ -684,7 +684,7 @@ int isGoodLabelName(char *str)
 
         free(trimmed_str);
     }
-   
+
     return result;
 }
 /*this function returned a trimmed version of the first param in line*/
@@ -695,7 +695,7 @@ char *getParam(char *Line)
     char *temp_param = NULL;
     char *returned_parm = NULL;
     int i = 0, j = 0;
-    if (!isOnlyWhiteChars(Line))
+    if (Line != NULL && !isOnlyWhiteChars(Line))
     {
         while (isWhiteChar(Line[i])) /*loop through white chars*/
         {
@@ -709,11 +709,14 @@ char *getParam(char *Line)
         temp_param = (char *)malloc(i + 1); /*include NULL terminator*/
 
         temp_param[i] = END_OF_STRING;
+
         for (j = 0; j < i; j++)
         {
             temp_param[j] = Line[j];
         }
+
         returned_parm = trimAll(temp_param);
+
         free(temp_param);
     }
     return returned_parm;
@@ -743,113 +746,3 @@ char *extractParam(char *str)
     return new_str;
 }
 /*checks if the recieved param is an immediate indexed param*/
-int isIndextype0(char *Param)
-{
-    char *trimmedParam = NULL;
-    char *temp;
-    int result = FALSE;
-    int len = 0;
-    if (Param != NULL && !isOnlyWhiteChars(Param))
-    {
-        trimmedParam = trimAll(Param);
-        temp = trimmedParam;
-        len = strlen(trimmedParam);
-        if (len > 2 && trimmedParam[0] == '#') /*set macro for hash*/
-        {
-            trimmedParam++; /*advance to first digit*/
-            if (checkIntegerInText(trimmedParam))
-            {
-
-                if (isIntInRange(getIntegerFromText(trimmedParam))) /*check if int is in range of 16 bit numbers*/
-                    result = TRUE;
-                /*   free(trimmedParam);*/
-            }
-        }
-        free(temp);
-    }
-    return result;
-}
-/*checks if the recieved param is an direct indexed param*/
-int isIndextype1(char *Param)
-{
-    int result = FALSE;
-    char *trimmed_parm;
-    if (Param != NULL && !isOnlyWhiteChars(Param))
-    {
-        trimmed_parm = trimAll(Param);
-        if (isGoodLabelName(trimmed_parm))
-        {
-            result = TRUE;
-        }
-    }
-    return result;
-}
-
-/*checks if the recieved param is an 'Index' indexed param*/
-int isIndextype2(char *Param)
-{
-    int result = TRUE;
-    char *trimmed_param;
-    char *temp;
-    int j = 0;
-    int i = 0;
-    if (Param == NULL || isOnlyWhiteChars(Param))
-    {
-        return FALSE;
-    }
-
-    trimmed_param = trimAll(Param);
-    while (trimmed_param[i] != END_OF_STRING && !isWhiteChar(trimmed_param[i]) && trimmed_param[i] != '[')
-    {
-        i++;
-    } /*skip the first word, and check to see if its a valid name for a parameter*/
-    temp = (char *)malloc(i + 1);
-    temp[i] = END_OF_STRING;
-    while (j < i)
-    {
-        temp[j] = trimmed_param[j];
-        j++;
-    }
-    if (!isGoodLabelName(temp)) /*checklabel name prior to [rXX]*/
-        result = FALSE;
-    free(temp);
-
-    if (trimmed_param[i] != '[')
-        result = FALSE;
-    i++;
-
-    if (trimmed_param[strlen(trimmed_param) - 1] != ']')
-        result = 0;
-    if (strlen(trimmed_param) - i != 4)
-    {
-        result = 0;
-    }
-    else
-    {
-
-        temp = (char *)malloc(4);
-        temp[3] = END_OF_STRING;
-        j = 0;
-        while (j < 3)
-        {
-            temp[j] = trimmed_param[j + i];
-            j++;
-        }
-        if (!isRegisterNameInRange(temp))
-            result = FALSE;
-    }
-    return result;
-}
-
-/*checks if the recieved param is an register direct indexed param*/
-int isIndextype3(char *Param)
-{
-    char *trimmed_param;
-    int result;
-    if (Param != NULL && !isOnlyWhiteChars(Param))
-    {
-        trimmed_param = trimAll(Param);
-        result = isRegisterNameInRange(trimmed_param);
-    }
-    return result;
-}
