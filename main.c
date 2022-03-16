@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
 
+    char *blat;
     handleParams(argc, argv);
 
     /*
@@ -135,6 +136,8 @@ void handleParams(int argc, char **argv)
 
 void doSomthingToFile(FILE *file, char *path)
 {
+
+    int i = 0;
     Assembler_mem *mem;
     if (file == NULL)
     {
@@ -147,11 +150,20 @@ void doSomthingToFile(FILE *file, char *path)
         macroStage(file, path);
         mem = InitAssemblerMem();
         assemblerFirstPass(file, mem);
+        debugAsm(mem);
         if (mem->no_Errors == TRUE)
         {
             assemblerSecondPass(file, mem);
         }
-        debugAsm(mem);
+        printf("blattttttt\n");
+        printf("\n\n\n translated to->\n%s\n\n<-", mem->String_Image);
+        printf("DATA blattttttt\n");
+        printf("\n\n\n translated to->\n<-");
+        for (i = 0; i < mem->Data_Image_Length; i++)
+        {
+            printf("%d\n", mem->Data_Image[i]);
+        }
+
         freeAssemblerMem(mem);
     }
 }

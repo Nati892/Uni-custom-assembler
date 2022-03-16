@@ -39,6 +39,16 @@ void PRNtranslate(char *str, Assembler_mem *mem);
 void RTStranslate(char *str, Assembler_mem *mem);
 void STOPtranslate(char *str, Assembler_mem *mem);
 
+/*to write*/
+char *translateForIndex0(char *param, char *secondline, int reg);
+char *translateForIndex1(char *param, char *secondline, int reg, Assembler_mem *mem);
+char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *mem);
+void translateForIndex3(char *param, char *secondline, int reg);
+
+void translateCommand(int command, char *str, Assembler_mem *mem);
+int getFunct(int command);
+int getOpcode(int command);
+
 #define INDEX_TYPE_0_NUM_LINES 1
 #define INDEX_TYPE_1_NUM_LINES 2
 #define INDEX_TYPE_2_NUM_LINES 2

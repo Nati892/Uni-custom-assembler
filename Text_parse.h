@@ -7,7 +7,8 @@
 #include <ctype.h>
 
 enum instructions
-{   UNKNOWN=0,
+{
+    UNKNOWN = 0,
     MOV = 2,
     CMP,
     ADD,
@@ -25,17 +26,18 @@ enum instructions
     RTS,
     STOP
 };
-int isInstructionName(char *str);                /*if its an instruction name then returns the enum type of it,else returns FALSE*/
-char *getLine(FILE *file);                       /*returns NULL if line only holds EOF or holds nothing*/
-char *initString();                              /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
-char *appendString(char *s1, char *s2);          /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
+int isInstructionName(char *str);       /*if its an instruction name then returns the enum type of it,else returns FALSE*/
+char *getLine(FILE *file);              /*returns NULL if line only holds EOF or holds nothing*/
+char *initString();                     /*creates an empty string - only containing NULL terminator,returns a pointer to that string*/
+char *appendString(char *s1, char *s2); /*appends s2 to s1 and returns new char of appended string, DOES NOT free(s2)*/
+char *appendStringAndFreeBoth(char *s1, char *s2);
+char *appendStringAndFreeFirst(char *s1, char *s2);
 char *trimAll(char *text);                       /*trims text and returns NULL if all of text is white spaces*/
 char *trimStart(char *text, int amount);         /*trims amount of characters from start of string*/
 char *trimEnd(char *text, int amount);           /*trims amount of characters from end of string*/
 char *getWordFromLine(char *Line);               /*extract word from start including white spaces at start of word*/
 char *getTrimmedWordFromLine(char *Line);        /*gets a fully trimmed word from a string*/
 char *extractWordFromStart(char *Line);          /*removes the first word from line and returns the corrected line*/
-void appendEndLineChar(char *line);              /*appends \n to given string*/
 void appendCharAtEnd(char *line, char toAppend); /*appends char at end of string*/
 int compareStrings(char *a, char *b);            /*compares two strings*/
 int countCommas(char *LinePointer);              /*counts the commas at the start of string*/
@@ -89,6 +91,8 @@ int isRegisterDirect(char* str){}*/
 #define MACRO_END "endm"
 #define ENTRY_WORD ".entry"
 #define EXTERN_WORD ".extern"
+#define SQUARE_BRACKET_LEFT '['
+#define SQUARE_BRACKET_RIGHT ']'
 #define MAX_INT_SIZE 32767  /*max 16 bit number*/
 #define MIN_INT_SIZE -32768 /*min 16 bit number*/
 

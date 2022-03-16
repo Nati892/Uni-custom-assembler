@@ -24,11 +24,6 @@ void debugAsm(Assembler_mem *mem); /*DEBUG TODELETE*/
 void reCalcLabels(Assembler_mem *mem);
 void checkExternExists(Assembler_mem *mem); /*search from used lables, for lables that have not been announced*/
 
-/*to write*/
-void translateForIndex0(char *param, char *ParamLines, char *secondline, int reg, Assembler_mem *mem);
-void translateForIndex1(char *param, char *ParamLines, char *secondline, int reg, Assembler_mem *mem);
-void translateForIndex2(char *param, char *ParamLines, char *secondline, int reg, Assembler_mem *mem);
-void translateForIndex3(char *param, char *ParamLines, char *secondline, int reg, Assembler_mem *mem);
 
 void SpreadCommand(char *str, Assembler_mem *mem);
 

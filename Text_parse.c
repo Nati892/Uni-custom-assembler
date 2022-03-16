@@ -149,6 +149,21 @@ char *appendString(char *s1, char *s2)
     return new_string;
 }
 
+char *appendStringAndFreeBoth(char *s1, char *s2)
+{
+    char *temp;
+    temp = appendString(s1, s2);
+    free(s1);
+    free(s2);
+    return temp;
+}
+char *appendStringAndFreeFirst(char *s1, char *s2)
+{
+    char *temp;
+    temp = appendString(s1, s2);
+    free(s1);
+    return temp;
+}
 /*returns the trimmed given text in a new string, does not free given text pointer*/
 char *trimAll(char *text)
 {
@@ -172,6 +187,7 @@ char *trimAll(char *text)
     {
         trimmed_text = NULL;
     }
+
     else
     {
         j = text_length - j;
@@ -214,13 +230,13 @@ char *trimEnd(char *text, int amount)
 
     if (new_txt_len <= 0) /*null handling*/
         return NULL;
-
     trimmed_text = (char *)malloc(new_txt_len + 1); /*+1 for \0 char*/
     for (i = 0; i < new_txt_len; i++)               /*cpoy the trimmed text*/
     {
         trimmed_text[i] = text[i];
     }
     trimmed_text[i] = END_OF_STRING;
+
     return trimmed_text;
 }
 
@@ -290,15 +306,6 @@ char *extractWordFromStart(char *Line)
     }
     free(Line);
     return newLine;
-}
-
-/*appends a \n in the end of string */
-void appendEndLineChar(char *line)
-{
-    int length = strlen(line);
-    line = realloc(line, length + 2);
-    line[length] = ENDLINE;
-    line[length + 1] = END_OF_STRING;
 }
 
 /*creates empty string*/
@@ -464,7 +471,6 @@ int isCommentLine(char *line)
 /*checks if string is a preserved word*/
 int isKeyWord(char *str)
 {
-
     int result = FALSE;
     if (isInstructionName(str) || isDataLabelDefinition(str) || isStringLabelDefinition(str) || isEntryDefinition(str) || isExternDefinition(str) || isMacroEnd(str) || isMacroStart(str) || isRegisterNameInRange(str))
         result = TRUE;
@@ -476,6 +482,7 @@ int isRegisterNameInRange(char *str)
 {
     int converted;
     int result = 0;
+
     if (str == NULL)
         return result;
     if (str[0] == 'r') /*first digit is 'r'*/
@@ -577,7 +584,9 @@ int isExternDefinition(char *str) /*check if it is an extern label*/
 
     trimmed_str = trimAll(str);
     if (strcmp(trimmed_str, EXTERN_WORD))
+    {
         result = 0;
+    }
     free(trimmed_str);
     return result;
 }
@@ -585,11 +594,11 @@ int isEntryDefinition(char *str) /*check if it is an entry definition*/
 {
     char *trimmed_str;
     int result = 1;
-
     trimmed_str = trimAll(str);
     if (strcmp(trimmed_str, ENTRY_WORD))
         result = 0;
     free(trimmed_str);
+
     return result;
 }
 

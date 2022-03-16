@@ -8,11 +8,12 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     The data image will be filled in the first pass;
     And all the labels will be collected*/
     char *curr_Line, *curr_Word;
+    printf("first pass starts\n");
     fseek(src, 0, SEEK_SET); /*set file read point to start*/
     curr_Line = getLine(src);
     while (curr_Line != NULL) /*loop through the lines*/
     {
-        printf("falling in line %d\n", mem->line_counter);
+        printf("Line ->%s<-, ->%d<-\n",curr_Line,mem->IC);
         if (!isCommentLine(curr_Line) && !isOnlyWhiteChars(curr_Line)) /*if its a comment then Ignore the line*/
         {
             if (strlen(curr_Line) > MAX_Line_LENGTH)
@@ -97,6 +98,7 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
     {
         reCalcLabels(mem);
     }
+    printf("first pass ends\n");
 }
 
 /*the second pass is called knowing there arent any errors in the first pass,
@@ -107,6 +109,7 @@ void assemblerSecondPass(FILE *src, Assembler_mem *mem)
     printf("**started second pass **\n");
     fseek(src, 0, SEEK_SET); /*set file read point to start*/
     mem->line_counter = 0;
+    mem->IC = 100;
 
     curr_Line = getLine(src);
     while (curr_Line != NULL) /*loop through the lines*/
@@ -692,10 +695,13 @@ void checkEntryLables(Assembler_mem *mem)
 void SpreadCommand(char *str, Assembler_mem *mem)
 {
     char *cmd_name, *new_str;
+    printf("started handling command\n");
     cmd_name = getTrimmedWordFromLine(str);
     new_str = trimAll(str);
     new_str = extractWordFromStart(new_str);
-    switch (isInstructionName(cmd_name))
+
+    translateCommand(isInstructionName(cmd_name),new_str,mem);
+  /*  switch (isInstructionName(cmd_name))
     {
     case MOV:
         MOVtranslate(new_str, mem);
@@ -747,7 +753,8 @@ void SpreadCommand(char *str, Assembler_mem *mem)
         break;
     default:
         break;
-    }
+    }*/
+    printf("finished handling command\n");
 }
 
 /*search from used lables, for lables that have not been announced*/

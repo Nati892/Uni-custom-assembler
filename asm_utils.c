@@ -11,6 +11,7 @@ Assembler_mem *InitAssemblerMem()
     mem->no_Errors = 1;
     mem->label_Table = initList();
     mem->ext_labels = initList();
+    mem->ext_file_table = initList();
     mem->String_Image = initString();
     return mem;
 }
@@ -31,6 +32,8 @@ void restartAssemblerMem(Assembler_mem *mem)
     mem->ext_labels = initList();
     free(mem->String_Image);
     mem->String_Image = initString();
+    free(mem->ext_file_table);
+    mem->ext_file_table = initList();
 }
 
 void freeAssemblerMem(Assembler_mem *mem)
@@ -38,6 +41,7 @@ void freeAssemblerMem(Assembler_mem *mem)
     free(mem->Data_Image);
     killList(mem->label_Table);
     killList(mem->ext_labels);
+    killList(mem->ext_file_table);
     free(mem->String_Image);
     free(mem);
 }
@@ -54,7 +58,7 @@ void announceSyntaxErrorAtLine(char *str, int lineNumber, Assembler_mem *mem)
     printf("ERROR in line %d:: %s\n", lineNumber, str);
 }
 
-void setARE(char *word, int ARE)
+void setField_ARE(char *word, int ARE)
 {
     switch (ARE)
     {
@@ -162,6 +166,21 @@ void setField_16bitNum(char *line, int num)
     free(src);
 }
 
+char *initDataLine()
+{
+    char *newLine;
+    int i;
+    newLine = (char *)malloc(22);
+    for (i = 0; i < 20; i++)
+    {
+        newLine[i] = '0';
+    }
+
+    newLine[21] = END_OF_STRING;
+    newLine[20] = ENDLINE;
+    return newLine;
+}
+
 char *addLabelLines(Label *label)
 {
     int i = 0;
@@ -175,13 +194,13 @@ char *addLabelLines(Label *label)
     }
     if (label->_attrib_extern == TRUE)
     {
-        setARE(firstLine, ARE_E);
-        setARE(secondLine, ARE_E);
+        setField_ARE(firstLine, ARE_E);
+        setField_ARE(secondLine, ARE_E);
     }
     else
     {
-        setARE(firstLine, ARE_R);
-        setARE(secondLine, ARE_R);
+        setField_ARE(firstLine, ARE_R);
+        setField_ARE(secondLine, ARE_R);
     }
     word = convertIntToBitSizedUnsignedBinary(label->_base_address, 16);
     memcpy((firstLine + 4), word, 16);
@@ -197,12 +216,23 @@ char *addLabelLines(Label *label)
     return result;
 }
 
+/*when seeing extern label used then saves it to the mem->*/
+void saveExternUsedInLine(char *label_name, Assembler_mem *mem)
+{
+    char *trimmedParam;
+    int *LineNum = (int *)malloc(sizeof(int));
+    trimmedParam = trimAll(label_name);
+    *LineNum = mem->IC;
+    insertnewnode(mem->ext_file_table, trimmedParam, LineNum);
+}
+
 int isIndextype0(char *Param)
 {
     char *trimmedParam = NULL;
     char *temp;
     int result = FALSE;
     int len = 0;
+    printf("isIndextype0 starts with ->%s<-\n", Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmedParam = trimAll(Param);
@@ -221,31 +251,43 @@ int isIndextype0(char *Param)
         }
         free(temp);
     }
+    printf("isIndextype0 ends with ->%d<-\n", result);
     return result;
 }
 /*checks if the recieved param is an direct indexed param*/
 int isIndextype1(char *Param, Assembler_mem *mem)
 {
+    printf("isIndextype1 starts with ->%s<-\n", Param);
     int result = FALSE;
     char *trimmed_parm;
     int *LineValue;
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
+        printf("--got here \n");
+
         trimmed_parm = trimAll(Param);
         if (isGoodLabelName(trimmed_parm))
         {
+            printf("--got here1\n");
+
             result = TRUE;
-            LineValue = (int *)malloc(sizeof(int));
-            *LineValue = mem->line_counter;
-            insertnewnode(mem->ext_labels, trimmed_parm, LineValue);
+            if (mem != NULL)
+            {
+                LineValue = (int *)malloc(sizeof(int));
+                *LineValue = mem->line_counter;
+                insertnewnode(mem->ext_labels, trimmed_parm, LineValue);
+            }
         }
+        printf("--got here2 \n");
     }
+    printf("isIndextype1 ends\n");
     return result;
 }
 
 /*checks if the recieved param is an 'Index' indexed param*/
 int isIndextype2(char *Param, Assembler_mem *mem)
 {
+    printf("isIndextype2 starts with ->%s<-\n", Param);
     int result = TRUE;
     char *trimmed_param;
     char *temp;
@@ -269,16 +311,17 @@ int isIndextype2(char *Param, Assembler_mem *mem)
         temp[j] = trimmed_param[j];
         j++;
     }
-    if (!isGoodLabelName(temp)) /*checklabel name prior to [rXX]*/
+    if (!isGoodLabelName(temp)) /*check label name prior to [rXX]*/
     {
         result = FALSE;
         free(temp);
     }
     else /*save label name for future error checking*/
     {
+        if(mem!=NULL){
         LineValue = (int *)malloc(sizeof(int));
         *LineValue = mem->line_counter;
-        insertnewnode(mem->ext_labels, temp, LineValue);
+        insertnewnode(mem->ext_labels, temp, LineValue);}
     }
 
     if (trimmed_param[i] != '[')
@@ -305,6 +348,7 @@ int isIndextype2(char *Param, Assembler_mem *mem)
         if (!isRegisterNameInRange(temp))
             result = FALSE;
     }
+    printf("isIndextype2 ends with ->%d<-\n", result);
     return result;
 }
 
@@ -313,10 +357,13 @@ int isIndextype3(char *Param)
 {
     char *trimmed_param;
     int result;
+    printf("isIndextype3 starts with ->%s<-\n", Param);
+
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_param = trimAll(Param);
         result = isRegisterNameInRange(trimmed_param);
     }
+    printf("isIndextype3 starts with ->%d<-\n", result);
     return result;
 }

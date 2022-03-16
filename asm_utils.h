@@ -41,7 +41,7 @@ void announceSyntaxErrorAtLine(char *str, int lineNumber, Assembler_mem *mem);
 char *convertIntToBitSizedUnsignedBinary(int num, int BitSize);       /*converts an int to a binary string of a pocked size*/
 void setSubStringToBinary(char *str, int num, int start, int finish); /*sets field inside text to a binary num*/
 /*sets ARE value of a given value*/
-void setARE(char *word, int ARE);
+void setField_ARE(char *word, int ARE);
 /*sets fucnt field of given string*/
 void setField_Funct(char *line, int num);
 /*sets opcode field of given string*/
@@ -56,8 +56,10 @@ void setField_dstReg(char *line, int num);
 void setField_dstIndexMethod(char *line, int num);
 /*sets a field with a 16 bit number*/
 void setField_16bitNum(char *line, int num);
-
+char *initDataLine();
 char *addLabelLines(Label *label);
+
+void saveExternUsedInLine(char *label_name, Assembler_mem *mem);/*whe seeing extern label used then saves it to the mem->_extern_file_table*/
 
 int isIndextype0(char *Param);                     /*checks if recieved param is a of immediate indexing method*/
 int isIndextype1(char *Param, Assembler_mem *mem); /*checks if the recieved param is an direct indexed param*/

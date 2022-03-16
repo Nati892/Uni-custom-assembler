@@ -1,0 +1,7 @@
+.extern vall
+;cmp #13,vall
+;mov b , vall
+.entry b
+b: 	mov r11 , vall[r10]
+;mov #-1 , vall
+;b: mov #-1 , vall
