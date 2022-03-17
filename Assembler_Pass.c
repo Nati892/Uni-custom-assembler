@@ -183,12 +183,12 @@ void createEntFile(Assembler_mem *mem)
     ENT_FILE = CreateFileWithEnding(mem->file_name, FILE_ENDING_ENT);
     fseek(ENT_FILE, 0, SEEK_SET);
     ent_List = mem->label_Table;
-    while (ent_List != NULL)
+    while (ent_List != NULL)/*loop through eall labels*/
     {
         if (ent_List->key != NULL)
         {
             temp_label = (Label *)ent_List->data;
-            if (temp_label->_attrib_entry == TRUE)
+            if (temp_label->_attrib_entry == TRUE)/*only output entry labels*/
             {
                 fprintf(ENT_FILE, "%s,%04d,%04d\n", ent_List->key, temp_label->_base_address, temp_label->_offset);
             }
@@ -554,7 +554,7 @@ void handleLabel(char *name, char *line, Assembler_mem *mem)
                 storeLable(mem->label_Table, name, FALSE, UNDEF, INSTRUCTION, mem->IC, calcBaseAddress(mem->IC), calcOffsetAddress(mem->IC));
             }
         }
-        else /*if lien is not empty*/
+        else /*if line is not empty*/
         {
             curr_word = getTrimmedWordFromLine(trimmed_Line);
             /*check syntax for entry and extern, there is no need to save label in this case*/
@@ -724,21 +724,7 @@ void addToDataImage(int num, Assembler_mem *mem)
     mem->Data_Image[mem->Data_Image_Length - 1] = num;
 }
 
-/*TODELETE*/
-void debugAsm(Assembler_mem *mem)
-{
-    int i = 0;
-    printf("\n\n\n********************\n *********\ndebug\n");
-    printf("no errors: %d\n", mem->no_Errors);
-    printf("DC: %d\n", mem->DC);
-    printf("mem->IC: %d\n", mem->IC);
-    printf("line counter: %d\n", mem->line_counter - 1);
-    for (i = 0; i < mem->Data_Image_Length; i++)
-        printf("value in cell %d -> %d\n", i, mem->Data_Image[i]);
-    printf("mem->Data_Image_Length: %d\n", mem->Data_Image_Length);
-    printf("printing label table\n\n\n");
-    printLables(mem->label_Table);
-}
+
 
 /*recalc all the .data/.staring label address*/
 void reCalcLabels(Assembler_mem *mem)

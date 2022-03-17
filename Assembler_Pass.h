@@ -20,7 +20,6 @@ void handleCommand(char *str, Assembler_mem *mem);
 void addToDataImage(int num, Assembler_mem *mem);
 void checkExternSyntax(char *name, char *line, Assembler_mem *mem);
 void checkEntrySyntax(char *name, char *line, Assembler_mem *mem);
-void debugAsm(Assembler_mem *mem); /*DEBUG TODELETE*/
 void reCalcLabels(Assembler_mem *mem);
 void checkExternExists(Assembler_mem *mem); /*search from used lables, for lables that have not been announced*/
 void translateDataImage(Assembler_mem *mem);

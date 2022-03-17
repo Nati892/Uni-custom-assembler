@@ -392,41 +392,6 @@ void storeLable(node *label_table, char *label_name, int is_extern, int attrib_e
     }
 }
 
-void printLables(node *labelTable) /*DEBUG*/
-{
-    Label *my_label;
-    printf("*****printing labels******\n");
-    while (labelTable != NULL)
-    {
-        if (labelTable->key != NULL)
-            printf("\nkey ->%s<-\n", labelTable->key);
-        my_label = (Label *)labelTable->data;
-        if (my_label != NULL)
-        {
-            printf("isEntry->%d<-\n", my_label->_attrib_entry);
-            printf("isExtern->%d<-\n", my_label->_attrib_extern);
-            printf("value->%d<-\n", my_label->_value);
-            printf("base ->%d<-\n", my_label->_base_address);
-            printf("offset->%d<-\n", my_label->_offset);
-            printf("labelType->%d<-\n", my_label->_label_type);
-        }
-        labelTable = labelTable->next;
-    }
-    printf("***** FINISHED printing labels******");
-}
-
-void extLabelsDebug(node *label_table) /*DEBUG*/
-{
-    while (label_table != NULL)
-    {
-        if (label_table->data != NULL)
-        {
-            printf("label ->%s<- with line %d\n", label_table->key, *(int *)label_table->data);
-        }
-        label_table = label_table->next;
-    }
-}
-
 int calcBaseAddress(int line_num)
 {
     return ((line_num / 16) * 16);

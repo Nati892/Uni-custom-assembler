@@ -83,7 +83,7 @@ void MOVcountLines(char *str, Assembler_mem *mem)
                     }
                     else
                     {
-                        if (isIndextype3(param)) 
+                        if (isIndextype3(param))
                         {
                             lineCounter += INDEX_TYPE_3_NUM_LINES;
                         }
@@ -767,10 +767,10 @@ char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *
     {
         label_name[i] = trimmedParam[i];
     }
-    
+
     label_node = findNode(mem->label_Table, label_name);
     tempLabel = (Label *)label_node->data;
-    
+
     newline1 = initDataLine();
     newline2 = initDataLine();
 
@@ -844,7 +844,7 @@ void translateForIndex3(char *param, char *secondline, int reg)
     }
 }
 
-void translateCommand(int command, char *str, Assembler_mem *mem)
+void translateCommand(int command, char *str, Assembler_mem *mem) /*translate command to binary*/
 {
 
     char firstline[21];
@@ -979,7 +979,7 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
     mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
 }
 
-int getFunct(int command)
+int getFunct(int command)/*get funct num for instruction*/
 {
     int result;
     switch (command)
@@ -1035,7 +1035,7 @@ int getFunct(int command)
     }
     return result;
 }
-int getOpcode(int command)
+int getOpcode(int command)/*get opcode num for instruction*/
 {
 
     int result = 0;
