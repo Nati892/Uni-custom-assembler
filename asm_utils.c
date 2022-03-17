@@ -13,27 +13,8 @@ Assembler_mem *InitAssemblerMem()
     mem->ext_labels = initList();
     mem->ext_file_table = initList();
     mem->String_Image = initString();
+    mem->file_name = NULL;
     return mem;
-}
-
-void restartAssemblerMem(Assembler_mem *mem)
-{
-    mem->no_Errors = 1;
-    free(mem->Data_Image);
-    mem->Data_Image = (int *)malloc(1 * sizeof(int));
-    mem->Data_Image_Length = 0;
-    mem->DC = 0;
-    mem->IC = 100;
-    mem->line_counter = 1;
-    mem->no_Errors = 1;
-    killList(mem->label_Table);
-    mem->label_Table = initList();
-    killList(mem->ext_labels);
-    mem->ext_labels = initList();
-    free(mem->String_Image);
-    mem->String_Image = initString();
-    free(mem->ext_file_table);
-    mem->ext_file_table = initList();
 }
 
 void freeAssemblerMem(Assembler_mem *mem)
@@ -63,13 +44,13 @@ void setField_ARE(char *word, int ARE)
     switch (ARE)
     {
     case ARE_A:
-        word[1] = '1';
+        word[1] = CHAR_ONE;
         break;
     case ARE_R:
-        word[2] = '1';
+        word[2] = CHAR_ONE;
         break;
     case ARE_E:
-        word[3] = '1';
+        word[3] = CHAR_ONE;
         break;
     }
 }
@@ -81,19 +62,19 @@ char *convertIntToBitSizedUnsignedBinary(int num, int BitSize)
     unsigned int mask = 0x00000001;
     if (BitSize <= 0)
         return NULL;
-    if (BitSize > 20)
-        BitSize = 20;
+    if (BitSize > DATA_WORD_LENGTH)
+        BitSize = DATA_WORD_LENGTH;
     newnum = (char *)malloc(BitSize + 1);
-    newnum[BitSize] = '\0';
+    newnum[BitSize] = END_OF_STRING;
     for (i = 0; i < BitSize; i++)
     {
         if ((num & mask))
         {
-            newnum[BitSize - i - 1] = '1';
+            newnum[BitSize - i - 1] = CHAR_ONE;
         }
         else
         {
-            newnum[BitSize - i - 1] = '0';
+            newnum[BitSize - i - 1] = CHAR_ZERO;
         }
         mask = mask << 1;
     }
@@ -119,6 +100,7 @@ void setSubStringToBinary(char *str, int num, int start, int finish)
     }
 }
 
+/*set the funct field (int binary) of a given string with a given number */
 void setField_Funct(char *line, int num)
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 4);
@@ -126,39 +108,45 @@ void setField_Funct(char *line, int num)
     memcpy(line, src, strlen(src));
     free(src);
 }
-void setField_Opcode(char *line, int num)
+
+void setField_Opcode(char *line, int num) /*set the opcode field (int binary) of a given string with a given number */
 {
-    line[19 - num] = '1';
+    line[19 - num] = CHAR_ONE;
 }
-void setField_srcReg(char *line, int num)
+
+void setField_srcReg(char *line, int num) /*set the source register field (int binary) of a given string with a given number */
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 4);
     line = line + 8;
     memcpy(line, src, strlen(src));
     free(src);
 }
-void setField_srcIndexMethod(char *line, int num)
+
+void setField_srcIndexMethod(char *line, int num) /*set the source register index field (int binary) of a given string with a given number */
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 2);
     line = line + 12;
     memcpy(line, src, strlen(src));
     free(src);
 }
-void setField_dstReg(char *line, int num)
+
+void setField_dstReg(char *line, int num) /*set the dest' register field (int binary) of a given string with a given number */
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 4);
     line = line + 14;
     memcpy(line, src, strlen(src));
     free(src);
 }
-void setField_dstIndexMethod(char *line, int num)
+
+void setField_dstIndexMethod(char *line, int num) /*set the dest' register index field (int binary) of a given string with a given number */
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 2);
     line = line + 18;
     memcpy(line, src, strlen(src));
     free(src);
 }
-void setField_16bitNum(char *line, int num)
+
+void setField_16bitNum(char *line, int num) /*set the 16 digit field (int binary) of a given string with a given number */
 {
     char *src = convertIntToBitSizedUnsignedBinary(num, 16);
     line = line + 4;
@@ -166,73 +154,48 @@ void setField_16bitNum(char *line, int num)
     free(src);
 }
 
-char *initDataLine()
+char *initDataLine() /*intializes data line with a \n in the end*/
 {
     char *newLine;
     int i;
-    newLine = (char *)malloc(22);
-    for (i = 0; i < 20; i++)
+    newLine = (char *)malloc(DATA_WORD_LENGTH + 2);
+    for (i = 0; i < DATA_WORD_LENGTH; i++)
     {
-        newLine[i] = '0';
+        newLine[i] = CHAR_ZERO;
     }
 
-    newLine[21] = END_OF_STRING;
-    newLine[20] = ENDLINE;
+    newLine[DATA_WORD_LENGTH + 1] = END_OF_STRING;
+    newLine[DATA_WORD_LENGTH] = ENDLINE;
     return newLine;
-}
-
-char *addLabelLines(Label *label)
-{
-    int i = 0;
-    char *word, *result;
-    char firstLine[20];
-    char secondLine[20];
-    for (i = 0; i < 20; i++)
-    {
-        firstLine[i] = '0';
-        secondLine[i] = '0';
-    }
-    if (label->_attrib_extern == TRUE)
-    {
-        setField_ARE(firstLine, ARE_E);
-        setField_ARE(secondLine, ARE_E);
-    }
-    else
-    {
-        setField_ARE(firstLine, ARE_R);
-        setField_ARE(secondLine, ARE_R);
-    }
-    word = convertIntToBitSizedUnsignedBinary(label->_base_address, 16);
-    memcpy((firstLine + 4), word, 16);
-    free(word);
-    word = convertIntToBitSizedUnsignedBinary(label->_offset, 16);
-    memcpy((secondLine + 4), word, 16);
-    free(word);
-    result = initString();
-    strcat(result, firstLine);
-    strcat(result, "\n");
-    strcat(result, secondLine);
-    strcat(result, "\n");
-    return result;
 }
 
 /*when seeing extern label used then saves it to the mem->*/
 void saveExternUsedInLine(char *label_name, Assembler_mem *mem)
 {
     char *trimmedParam;
-    int *LineNum = (int *)malloc(sizeof(int));
+    node *tempNode = NULL;
+    Label *tempLabel = NULL;
     trimmedParam = trimAll(label_name);
-    *LineNum = mem->IC;
-    insertnewnode(mem->ext_file_table, trimmedParam, LineNum);
+    tempNode = findNode(mem->label_Table, trimmedParam);
+    if (tempNode != NULL)
+    {
+        tempLabel = (Label *)tempNode->data;
+        if (tempLabel != NULL && tempLabel->_attrib_extern == TRUE)
+        {
+            int *LineNum = (int *)malloc(sizeof(int));
+            *LineNum = mem->IC;
+            insertnewnode(mem->ext_file_table, trimmedParam, LineNum);
+        }
+    }
 }
 
+/*checks if the recieved param is an immediate indexed param*/
 int isIndextype0(char *Param)
 {
     char *trimmedParam = NULL;
     char *temp;
     int result = FALSE;
     int len = 0;
-    printf("isIndextype0 starts with ->%s<-\n", Param);
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmedParam = trimAll(Param);
@@ -251,24 +214,21 @@ int isIndextype0(char *Param)
         }
         free(temp);
     }
-    printf("isIndextype0 ends with ->%d<-\n", result);
     return result;
 }
 /*checks if the recieved param is an direct indexed param*/
 int isIndextype1(char *Param, Assembler_mem *mem)
 {
-    printf("isIndextype1 starts with ->%s<-\n", Param);
     int result = FALSE;
     char *trimmed_parm;
     int *LineValue;
+
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
-        printf("--got here \n");
 
         trimmed_parm = trimAll(Param);
         if (isGoodLabelName(trimmed_parm))
         {
-            printf("--got here1\n");
 
             result = TRUE;
             if (mem != NULL)
@@ -278,16 +238,13 @@ int isIndextype1(char *Param, Assembler_mem *mem)
                 insertnewnode(mem->ext_labels, trimmed_parm, LineValue);
             }
         }
-        printf("--got here2 \n");
     }
-    printf("isIndextype1 ends\n");
     return result;
 }
 
 /*checks if the recieved param is an 'Index' indexed param*/
 int isIndextype2(char *Param, Assembler_mem *mem)
 {
-    printf("isIndextype2 starts with ->%s<-\n", Param);
     int result = TRUE;
     char *trimmed_param;
     char *temp;
@@ -318,10 +275,12 @@ int isIndextype2(char *Param, Assembler_mem *mem)
     }
     else /*save label name for future error checking*/
     {
-        if(mem!=NULL){
-        LineValue = (int *)malloc(sizeof(int));
-        *LineValue = mem->line_counter;
-        insertnewnode(mem->ext_labels, temp, LineValue);}
+        if (mem != NULL)
+        {
+            LineValue = (int *)malloc(sizeof(int));
+            *LineValue = mem->line_counter;
+            insertnewnode(mem->ext_labels, temp, LineValue);
+        }
     }
 
     if (trimmed_param[i] != '[')
@@ -348,7 +307,6 @@ int isIndextype2(char *Param, Assembler_mem *mem)
         if (!isRegisterNameInRange(temp))
             result = FALSE;
     }
-    printf("isIndextype2 ends with ->%d<-\n", result);
     return result;
 }
 
@@ -357,13 +315,124 @@ int isIndextype3(char *Param)
 {
     char *trimmed_param;
     int result;
-    printf("isIndextype3 starts with ->%s<-\n", Param);
 
     if (Param != NULL && !isOnlyWhiteChars(Param))
     {
         trimmed_param = trimAll(Param);
         result = isRegisterNameInRange(trimmed_param);
     }
-    printf("isIndextype3 starts with ->%d<-\n", result);
     return result;
+}
+
+int isLabelDefinition(char *str) /*checks if it is a 'label:' definition*/
+{
+    char *trimmed_str;
+    int result = 1;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    trimmed_str = trimAll(str);
+    if (trimmed_str[strlen(trimmed_str) - 1] != LABEL_DECLARATION_END)
+    {
+        result = 0;
+    }
+
+    free(trimmed_str);
+
+    return result;
+}
+
+node *LabelConstructor(char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset)
+{
+    node *new_node = NULL;
+    Label *new_label = NULL;
+    if (label_name != NULL)
+    {
+        new_label = (Label *)malloc(sizeof(Label));
+        new_label->_attrib_extern = is_extern;
+        new_label->_label_type = label_type;
+        new_label->_attrib_entry = attrib_entry;
+        new_label->_value = value;
+        new_label->_base_address = base_address;
+        new_label->_attrib_entry = attrib_entry;
+        new_label->_offset = offset;
+
+        new_node = createNode(label_name, new_label);
+    }
+    return new_node;
+}
+
+void storeLable(node *label_table, char *label_name, int is_extern, int attrib_entry, int label_type, int value, int base_address, int offset)
+{
+    Label *new_label = NULL;
+    node *new_node = NULL;
+    if (label_table->key == NULL) /*if first in list*/
+    {
+        if (label_name != NULL) /*if valid name for label*/
+        {
+            label_table->key = label_name;
+            new_label = (Label *)malloc(sizeof(Label));
+            new_label->_attrib_extern = is_extern;
+            new_label->_label_type = label_type;
+            new_label->_attrib_entry = attrib_entry;
+            new_label->_value = value;
+            new_label->_base_address = base_address;
+            new_label->_attrib_entry = attrib_entry;
+            new_label->_offset = offset;
+            label_table->data = new_label;
+        }
+    }
+    else
+    {
+        new_node = LabelConstructor(label_name, is_extern, attrib_entry, label_type, value, base_address, offset);
+        insertnode(label_table, new_node);
+    }
+}
+
+void printLables(node *labelTable) /*DEBUG*/
+{
+    Label *my_label;
+    printf("*****printing labels******\n");
+    while (labelTable != NULL)
+    {
+        if (labelTable->key != NULL)
+            printf("\nkey ->%s<-\n", labelTable->key);
+        my_label = (Label *)labelTable->data;
+        if (my_label != NULL)
+        {
+            printf("isEntry->%d<-\n", my_label->_attrib_entry);
+            printf("isExtern->%d<-\n", my_label->_attrib_extern);
+            printf("value->%d<-\n", my_label->_value);
+            printf("base ->%d<-\n", my_label->_base_address);
+            printf("offset->%d<-\n", my_label->_offset);
+            printf("labelType->%d<-\n", my_label->_label_type);
+        }
+        labelTable = labelTable->next;
+    }
+    printf("***** FINISHED printing labels******");
+}
+
+void extLabelsDebug(node *label_table) /*DEBUG*/
+{
+    while (label_table != NULL)
+    {
+        if (label_table->data != NULL)
+        {
+            printf("label ->%s<- with line %d\n", label_table->key, *(int *)label_table->data);
+        }
+        label_table = label_table->next;
+    }
+}
+
+int calcBaseAddress(int line_num)
+{
+    return ((line_num / 16) * 16);
+}
+
+int calcOffsetAddress(int line_num)
+{
+    return line_num % 16;
 }

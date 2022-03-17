@@ -1,4 +1,5 @@
 #include "Text_parse.h"
+#include <math.h>
 
 /*This function returns the next line,
 the function returns NULL if line only holds EOF or holds nothing.
@@ -755,3 +756,14 @@ char *extractParam(char *str)
     return new_str;
 }
 /*checks if the recieved param is an immediate indexed param*/
+
+int binStringToInt(char *bin_num)
+{
+    int result = 0, i;
+    for (i = 0; i < 4; i++)
+    {
+        if (bin_num[i] == CHAR_ONE)
+            result += pow(2.0, (double)(3 - i));
+    }
+    return result;
+}

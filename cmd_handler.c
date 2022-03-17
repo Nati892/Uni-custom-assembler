@@ -6,7 +6,6 @@ void MOVcountLines(char *str, Assembler_mem *mem)
     int lineCounter = 2; /*minmum lines for command with params*/
     char *trimmed_str = NULL;
     char *param = NULL;
-
     if (mem->no_Errors == TRUE && str != NULL && !isOnlyWhiteChars(str))
     {
 
@@ -33,13 +32,13 @@ void MOVcountLines(char *str, Assembler_mem *mem)
             }
             else
             {
-                if (isIndextype1(param, NULL))
+                if (isIndextype1(param, mem))
                 {
                     lineCounter += INDEX_TYPE_1_NUM_LINES;
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
@@ -78,13 +77,13 @@ void MOVcountLines(char *str, Assembler_mem *mem)
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
                     else
                     {
-                        if (isIndextype3(param))
+                        if (isIndextype3(param)) 
                         {
                             lineCounter += INDEX_TYPE_3_NUM_LINES;
                         }
@@ -160,13 +159,13 @@ void CMPcountLines(char *str, Assembler_mem *mem)
             }
             else
             {
-                if (isIndextype1(param, NULL))
+                if (isIndextype1(param, mem))
                 {
                     lineCounter += INDEX_TYPE_1_NUM_LINES;
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
@@ -205,13 +204,13 @@ void CMPcountLines(char *str, Assembler_mem *mem)
                 }
                 else
                 {
-                    if (isIndextype1(param, NULL))
+                    if (isIndextype1(param, mem))
                     {
                         lineCounter += INDEX_TYPE_1_NUM_LINES;
                     }
                     else
                     {
-                        if (isIndextype2(param, NULL))
+                        if (isIndextype2(param, mem))
                         {
                             lineCounter += INDEX_TYPE_2_NUM_LINES;
                         }
@@ -293,13 +292,13 @@ void LEAcountLines(char *str, Assembler_mem *mem)
         {
             param = getParam(trimmed_str);
             trimmed_str = extractParam(trimmed_str);
-            if (isIndextype1(param, NULL))
+            if (isIndextype1(param, mem))
             {
                 lineCounter += INDEX_TYPE_1_NUM_LINES;
             }
             else
             {
-                if (isIndextype2(param, NULL))
+                if (isIndextype2(param, mem))
                 {
                     lineCounter += INDEX_TYPE_2_NUM_LINES;
                 }
@@ -324,13 +323,13 @@ void LEAcountLines(char *str, Assembler_mem *mem)
             {
                 param = getParam(trimmed_str);
                 trimmed_str = extractParam(trimmed_str);
-                if (isIndextype1(param, NULL))
+                if (isIndextype1(param, mem))
                 {
                     lineCounter += INDEX_TYPE_1_NUM_LINES;
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
@@ -409,13 +408,13 @@ void CLRcountLines(char *str, Assembler_mem *mem)
             }
             else
             {
-                if (isIndextype1(param, NULL))
+                if (isIndextype1(param, mem))
                 {
                     lineCounter += INDEX_TYPE_1_NUM_LINES;
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
@@ -487,13 +486,13 @@ void JMPcountLines(char *str, Assembler_mem *mem)
         {
             param = getParam(trimmed_str);
             trimmed_str = extractParam(trimmed_str);
-            if (isIndextype1(param, NULL))
+            if (isIndextype1(param, mem))
             {
                 lineCounter += INDEX_TYPE_1_NUM_LINES;
             }
             else
             {
-                if (isIndextype2(param, NULL))
+                if (isIndextype2(param, mem))
                 {
                     lineCounter += INDEX_TYPE_2_NUM_LINES;
                 }
@@ -624,13 +623,13 @@ void PRNcountLines(char *str, Assembler_mem *mem)
             else
             {
 
-                if (isIndextype1(param, NULL))
+                if (isIndextype1(param, mem))
                 {
                     lineCounter += INDEX_TYPE_1_NUM_LINES;
                 }
                 else
                 {
-                    if (isIndextype2(param, NULL))
+                    if (isIndextype2(param, mem))
                     {
                         lineCounter += INDEX_TYPE_2_NUM_LINES;
                     }
@@ -677,485 +676,13 @@ void STOPcountLines(char *str, Assembler_mem *mem)
     RTScountLines(str, mem);
 }
 
-void MOVtranslate(char *str, Assembler_mem *mem)
-{
-    printf("MOVtranslate started with ->%s<-\n", str);
-    char firstline[21];
-    char secondline[21];
-    char *command_image,   /*end command image*/
-        *firstParamLines,  /*lines added by first param*/
-        *secondParamLines, /*lines added by second param*/
-        *trimmed_str,
-        *param;
-    int i;
-    mem->IC += 2;
-    for (i = 0; i < 20; i++) /*set both lines to all '0' chars*/
-    {
-        firstline[i] = '0';
-        secondline[i] = '0';
-    }
-    firstline[20] = END_OF_STRING;
-    secondline[20] = END_OF_STRING;
-
-    firstParamLines = initString();
-    secondParamLines = initString();
-
-    setField_ARE(firstline, ARE_A); /*EDIT*/
-    setField_ARE(secondline, ARE_A);
-    setField_Opcode(firstline, MOV_OPCODE);
-    setField_Funct(secondline, NO_FUNCT);
-    trimmed_str = trimAll(str);
-
-    param = getParam(trimmed_str); /*handle first param*/
-    if (isIndextype0(param))
-    {
-        firstParamLines = translateForIndex0(param, secondline, SRC);
-        mem->IC++;
-    }
-    else
-    {
-        if (isIndextype1(param, mem))
-        {
-            firstParamLines = translateForIndex1(param, secondline, SRC, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype2(param, mem))
-            {
-
-                firstParamLines = translateForIndex2(param, secondline, SRC, mem);
-                mem->IC += 2;
-            }
-            else
-            {
-                if (isIndextype3(param))
-                {
-
-                    translateForIndex3(param, secondline, SRC);
-                    free(firstParamLines);
-                    firstParamLines = NULL;
-                }
-            }
-        }
-    }
-
-    free(param);
-
-    trimmed_str = extractParam(trimmed_str); /*remove comma in middle*/
-    removeComma(trimmed_str);
-
-    param = getParam(trimmed_str); /*handle second param*/
-    printf("start second param handling with ->%s<-\n", param);
-
-    if (isIndextype1(param, mem))
-    {
-        secondParamLines = translateForIndex1(param, secondline, DST, mem);
-        mem->IC += 2;
-    }
-    else
-    {
-        if (isIndextype2(param, mem))
-        {
-            secondParamLines = translateForIndex2(param, secondline, DST, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype3(param))
-            {
-                translateForIndex3(param, secondline, DST);
-                free(secondParamLines);
-                secondParamLines = NULL;
-            }
-        }
-    }
-    printf("end second param handling\n");
-
-    /*check param*/
-    free(param);
-    free(trimmed_str);
-    command_image = initString();
-    command_image = appendStringAndFreeFirst(command_image, firstline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    command_image = appendStringAndFreeFirst(command_image, secondline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    if (firstParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, firstParamLines);
-    }
-    if (secondParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, secondParamLines);
-    }
-    mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
-
-    printf("MOVtranslate done\n");
-}
-
-void CMPtranslate(char *str, Assembler_mem *mem)
-{
-    printf("CMPtranslate started with ->%s<-\n", str);
-    char firstline[21];
-    char secondline[21];
-    char *command_image,   /*end command image*/
-        *firstParamLines,  /*lines added by first param*/
-        *secondParamLines, /*lines added by second param*/
-        *trimmed_str,
-        *param;
-    int i;
-    mem->IC += 2;
-    for (i = 0; i < 20; i++) /*set both lines to all '0' chars*/
-    {
-        firstline[i] = '0';
-        secondline[i] = '0';
-    }
-    firstline[20] = END_OF_STRING;
-    secondline[20] = END_OF_STRING;
-
-    firstParamLines = initString();
-    secondParamLines = initString();
-
-    setField_ARE(firstline, ARE_A);
-    setField_ARE(secondline, ARE_A);
-    setField_Opcode(firstline, CMP_OPCODE); /*EDIT*/
-    setField_Funct(secondline, NO_FUNCT);
-    trimmed_str = trimAll(str);
-
-    param = getParam(trimmed_str); /*handle first param*/
-    if (isIndextype0(param))
-    {
-        firstParamLines = translateForIndex0(param, secondline, SRC);
-        mem->IC++;
-    }
-    else
-    {
-        if (isIndextype1(param, mem))
-        {
-            firstParamLines = translateForIndex1(param, secondline, SRC, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype2(param, mem))
-            {
-
-                firstParamLines = translateForIndex2(param, secondline, SRC, mem);
-                mem->IC += 2;
-            }
-            else
-            {
-                if (isIndextype3(param))
-                {
-
-                    translateForIndex3(param, secondline, SRC);
-                    free(firstParamLines);
-                    firstParamLines = NULL;
-                }
-            }
-        }
-    }
-
-    free(param);
-
-    trimmed_str = extractParam(trimmed_str); /*remove comma in middle*/
-    removeComma(trimmed_str);
-
-    param = getParam(trimmed_str); /*handle second param*/
-    printf("start second param handling with ->%s<-\n", param);
-    if (isIndextype0(param))
-    {
-        secondParamLines = translateForIndex0(param, secondline, DST);
-        mem->IC++;
-    }
-    else
-    {
-        if (isIndextype1(param, mem))
-        {
-            secondParamLines = translateForIndex1(param, secondline, DST, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype2(param, mem))
-            {
-                secondParamLines = translateForIndex2(param, secondline, DST, mem);
-                mem->IC += 2;
-            }
-            else
-            {
-                if (isIndextype3(param))
-                {
-                    translateForIndex3(param, secondline, DST);
-                    free(secondParamLines);
-                    secondParamLines = NULL;
-                }
-            }
-        }
-    }
-    printf("end second param handling\n");
-
-    /*check param*/
-    free(param);
-    free(trimmed_str);
-    command_image = initString();
-    command_image = appendStringAndFreeFirst(command_image, firstline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    command_image = appendStringAndFreeFirst(command_image, secondline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    if (firstParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, firstParamLines);
-    }
-    if (secondParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, secondParamLines);
-    }
-    mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
-
-    printf("CMPtranslate done\n");
-}
-void ADDtranslate(char *str, Assembler_mem *mem)
-{
-    printf("ADDtranslate started with ->%s<-\n", str);
-    char firstline[21];
-    char secondline[21];
-    char *command_image,   /*end command image*/
-        *firstParamLines,  /*lines added by first param*/
-        *secondParamLines, /*lines added by second param*/
-        *trimmed_str,
-        *param;
-    int i;
-    mem->IC += 2;
-    for (i = 0; i < 20; i++) /*set both lines to all '0' chars*/
-    {
-        firstline[i] = '0';
-        secondline[i] = '0';
-    }
-    firstline[20] = END_OF_STRING;
-    secondline[20] = END_OF_STRING;
-
-    firstParamLines = initString();
-    secondParamLines = initString();
-
-    setField_ARE(firstline, ARE_A); /*EDIT*/
-    setField_ARE(secondline, ARE_A);
-    setField_Opcode(firstline, ADD_OPCODE);
-    setField_Funct(secondline, ADD_FUNCT);
-    trimmed_str = trimAll(str);
-
-    param = getParam(trimmed_str); /*handle first param*/
-    if (isIndextype0(param))
-    {
-        firstParamLines = translateForIndex0(param, secondline, SRC);
-        mem->IC++;
-    }
-    else
-    {
-        if (isIndextype1(param, mem))
-        {
-            firstParamLines = translateForIndex1(param, secondline, SRC, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype2(param, mem))
-            {
-
-                firstParamLines = translateForIndex2(param, secondline, SRC, mem);
-                mem->IC += 2;
-            }
-            else
-            {
-                if (isIndextype3(param))
-                {
-
-                    translateForIndex3(param, secondline, SRC);
-                    free(firstParamLines);
-                    firstParamLines = NULL;
-                }
-            }
-        }
-    }
-
-    free(param);
-
-    trimmed_str = extractParam(trimmed_str); /*remove comma in middle*/
-    removeComma(trimmed_str);
-
-    param = getParam(trimmed_str); /*handle second param*/
-    printf("start second param handling with ->%s<-\n", param);
-
-    if (isIndextype1(param, mem))
-    {
-        secondParamLines = translateForIndex1(param, secondline, DST, mem);
-        mem->IC += 2;
-    }
-    else
-    {
-        if (isIndextype2(param, mem))
-        {
-            secondParamLines = translateForIndex2(param, secondline, DST, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype3(param))
-            {
-                translateForIndex3(param, secondline, DST);
-                free(secondParamLines);
-                secondParamLines = NULL;
-            }
-        }
-    }
-    printf("end second param handling\n");
-
-    /*check param*/
-    free(param);
-    free(trimmed_str);
-    command_image = initString();
-    command_image = appendStringAndFreeFirst(command_image, firstline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    command_image = appendStringAndFreeFirst(command_image, secondline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    if (firstParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, firstParamLines);
-    }
-    if (secondParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, secondParamLines);
-    }
-    mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
-
-    printf("ADDtranslate done\n");
-}
-void SUBtranslate(char *str, Assembler_mem *mem)
-{
-    printf("SUBtranslate started with ->%s<-\n", str);
-    char firstline[21];
-    char secondline[21];
-    char *command_image,   /*end command image*/
-        *firstParamLines,  /*lines added by first param*/
-        *secondParamLines, /*lines added by second param*/
-        *trimmed_str,
-        *param;
-    int i;
-    mem->IC += 2;
-    for (i = 0; i < 20; i++) /*set both lines to all '0' chars*/
-    {
-        firstline[i] = '0';
-        secondline[i] = '0';
-    }
-    firstline[20] = END_OF_STRING;
-    secondline[20] = END_OF_STRING;
-
-    firstParamLines = initString();
-    secondParamLines = initString();
-
-    setField_ARE(firstline, ARE_A); /*EDIT*/
-    setField_ARE(secondline, ARE_A);
-    setField_Opcode(firstline, SUB_OPCODE);
-    setField_Funct(secondline, SUB_FUNCT);
-    trimmed_str = trimAll(str);
-
-    param = getParam(trimmed_str); /*handle first param*/
-    if (isIndextype0(param))
-    {
-        firstParamLines = translateForIndex0(param, secondline, SRC);
-        mem->IC++;
-    }
-    else
-    {
-        if (isIndextype1(param, mem))
-        {
-            firstParamLines = translateForIndex1(param, secondline, SRC, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype2(param, mem))
-            {
-
-                firstParamLines = translateForIndex2(param, secondline, SRC, mem);
-                mem->IC += 2;
-            }
-            else
-            {
-                if (isIndextype3(param))
-                {
-
-                    translateForIndex3(param, secondline, SRC);
-                    free(firstParamLines);
-                    firstParamLines = NULL;
-                }
-            }
-        }
-    }
-
-    free(param);
-
-    trimmed_str = extractParam(trimmed_str); /*remove comma in middle*/
-    removeComma(trimmed_str);
-
-    param = getParam(trimmed_str); /*handle second param*/
-    printf("start second param handling with ->%s<-\n", param);
-
-    if (isIndextype1(param, mem))
-    {
-        secondParamLines = translateForIndex1(param, secondline, DST, mem);
-        mem->IC += 2;
-    }
-    else
-    {
-        if (isIndextype2(param, mem))
-        {
-            secondParamLines = translateForIndex2(param, secondline, DST, mem);
-            mem->IC += 2;
-        }
-        else
-        {
-            if (isIndextype3(param))
-            {
-                translateForIndex3(param, secondline, DST);
-                free(secondParamLines);
-                secondParamLines = NULL;
-            }
-        }
-    }
-    printf("end second param handling\n");
-
-    /*check param*/
-    free(param);
-    free(trimmed_str);
-    command_image = initString();
-    command_image = appendStringAndFreeFirst(command_image, firstline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    command_image = appendStringAndFreeFirst(command_image, secondline);
-    command_image = appendStringAndFreeFirst(command_image, "\n");
-    if (firstParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, firstParamLines);
-    }
-    if (secondParamLines != NULL)
-    {
-        command_image = appendStringAndFreeBoth(command_image, secondParamLines);
-    }
-    mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
-
-    printf("SUBtranslate done\n");
-}
-void LEAtranslate(char *str, Assembler_mem *mem)
-{
-}
-
 char *translateForIndex0(char *param, char *secondline, int reg)
 {
     char *newline, *trimmedParam;
     int convertedparam;
-    printf("translateForIndex0 started with ->%s<-\n", param);
     if (reg == SRC)
     {
+
         setField_srcReg(secondline, 0);
         setField_srcIndexMethod(secondline, 0);
     }
@@ -1173,7 +700,6 @@ char *translateForIndex0(char *param, char *secondline, int reg)
     setField_16bitNum(newline, convertedparam);
 
     free(trimmedParam);
-    printf("translateForIndex0 ends\n");
     return (newline);
 }
 char *translateForIndex1(char *param, char *secondline, int reg, Assembler_mem *mem)
@@ -1181,7 +707,6 @@ char *translateForIndex1(char *param, char *secondline, int reg, Assembler_mem *
     char *newline1, *newline2, *trimmedParam;
     char *ParamLines;
     Label *tempLabel;
-    printf("translateForIndex1 started with ->%s<-\n", param);
     ParamLines = initString();
     if (reg == SRC)
     {
@@ -1219,7 +744,6 @@ char *translateForIndex1(char *param, char *secondline, int reg, Assembler_mem *
     newline1 = appendStringAndFreeBoth(newline1, newline2);
     ParamLines = appendStringAndFreeBoth(ParamLines, newline1);
 
-    printf("translateForIndex1 ends\n");
     return (ParamLines);
 }
 char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *mem)
@@ -1228,12 +752,11 @@ char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *
     char *ParamLines;
     Label *tempLabel;
     node *label_node;
-    int index = 0, len, i, converted_reg_num;
-    printf("translateForIndex2 started with ->%s<-\n", param);
+    int index = 0, i, converted_reg_num;
 
     ParamLines = initString();
     trimmedParam = trimAll(param);
-    len = strlen(trimmedParam);
+
     while (trimmedParam[index] != SQUARE_BRACKET_LEFT) /*find the label before [rXX]*/
     {
         index++;
@@ -1244,13 +767,14 @@ char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *
     {
         label_name[i] = trimmedParam[i];
     }
+    
     label_node = findNode(mem->label_Table, label_name);
-    tempLabel = (Label *)label_node;
-
+    tempLabel = (Label *)label_node->data;
+    
     newline1 = initDataLine();
     newline2 = initDataLine();
 
-    if (tempLabel->_attrib_extern)
+    if (tempLabel != NULL && tempLabel->_attrib_extern)
     {
         setField_ARE(newline1, ARE_E);
         setField_ARE(newline2, ARE_E);
@@ -1285,11 +809,9 @@ char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *
         setField_dstReg(secondline, converted_reg_num);
         setField_dstIndexMethod(secondline, 2);
     }
-    printf("src reg num %d\n", converted_reg_num);
     newline1 = appendStringAndFreeBoth(newline1, newline2);
     ParamLines = appendStringAndFreeBoth(ParamLines, newline1);
 
-    printf("translateForIndex2 ends\n");
     return (ParamLines);
 }
 void translateForIndex3(char *param, char *secondline, int reg)
@@ -1297,7 +819,6 @@ void translateForIndex3(char *param, char *secondline, int reg)
 
     char *String_num, *trimmed_param;
     int int_num;
-    printf("translateForIndex3 started with ->%s<-\n", param);
 
     trimmed_param = trimAll(param);
 
@@ -1321,8 +842,6 @@ void translateForIndex3(char *param, char *secondline, int reg)
         setField_dstReg(secondline, int_num);
         setField_dstIndexMethod(secondline, 3);
     }
-
-    printf("translateForIndex3 ends\n");
 }
 
 void translateCommand(int command, char *str, Assembler_mem *mem)
@@ -1336,15 +855,14 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
                 *trimmed_str = NULL,
         *param;
     int i;
-    printf("translateCommand starts with command %d, and string ->%s<-\n", command, str);
 
-    for (i = 0; i < 20; i++) /*set both lines to all '0' chars*/
+    for (i = 0; i < DATA_WORD_LENGTH; i++) /*set both lines to all CHAR_ZERO chars*/
     {
-        firstline[i] = '0';
-        secondline[i] = '0';
+        firstline[i] = CHAR_ZERO;
+        secondline[i] = CHAR_ZERO;
     }
-    firstline[20] = END_OF_STRING;
-    secondline[20] = END_OF_STRING;
+    firstline[DATA_WORD_LENGTH] = END_OF_STRING;
+    secondline[DATA_WORD_LENGTH] = END_OF_STRING;
 
     setField_ARE(firstline, ARE_A); /*set ARE fields of both lines*/
     setField_ARE(secondline, ARE_A);
@@ -1357,15 +875,9 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
 
     setField_Funct(secondline, getFunct(command));
     trimmed_str = trimAll(str);
-    printf("try\n");
-    printf("!@!@#@#!@#@#@ ->%s<-\n", trimmed_str);
-    printf("!!!!!!! command %d\n", command);
     if (command == MOV || command == CMP || command == ADD || command == SUB || command == LEA) /*mov,cmp,add,sub,lea*/
     {
-        printf("!!!!!!! command %d\n", command);
-        printf("translateCommand working on first param\n");
         param = getParam(trimmed_str);
-        printf("parm->%s\n", param);
         if (command == MOV || command == CMP || command == ADD || command == SUB)
         {
             if (isIndextype3(param))
@@ -1389,6 +901,7 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
             firstParamLines = translateForIndex1(param, secondline, SRC, mem);
             mem->IC += 2;
         }
+
         else
         {
             if (isIndextype2(param, mem))
@@ -1402,12 +915,9 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
 
         trimmed_str = extractParam(trimmed_str); /*remove comma in middle*/
         removeComma(trimmed_str);
-        printf("translateCommand finished working on first param\n");
     } /*done with src operand*/
 
-    printf("translateCommand working on second parammmm->%s<-\n", trimmed_str);
-    param = getParam(trimmed_str); /*handle second param*/
-    printf("start second param handling with ->%s<-\n", param);
+    param = getParam(trimmed_str);        /*handle second param*/
     if (command == CMP || command == PRN) /*for instructions that have index 0 at dst operands*/
     {
         if (isIndextype0(param))
@@ -1445,12 +955,8 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
             translateForIndex3(param, secondline, DST);
         }
     }
-    printf("end second param handling\n");
     free(param);
 
-    printf("blat\n");
-
-    printf("double blat\n");
     if (trimmed_str != NULL)
         free(trimmed_str);
     command_image = initString();
@@ -1461,6 +967,7 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
         command_image = appendStringAndFreeFirst(command_image, secondline);
         command_image = appendStringAndFreeFirst(command_image, "\n");
     }
+
     if (firstParamLines != NULL)
     {
         command_image = appendStringAndFreeBoth(command_image, firstParamLines);
@@ -1470,7 +977,6 @@ void translateCommand(int command, char *str, Assembler_mem *mem)
         command_image = appendStringAndFreeBoth(command_image, secondParamLines);
     }
     mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
-    printf("translateCommand ends");
 }
 
 int getFunct(int command)
@@ -1533,7 +1039,6 @@ int getOpcode(int command)
 {
 
     int result = 0;
-    printf("started get opcode with %d\n", command);
     switch (command)
     {
     case MOV:
@@ -1585,6 +1090,5 @@ int getOpcode(int command)
         result = STOP_OPCODE;
         break;
     }
-    printf("finished get opcode\n");
     return result;
 }

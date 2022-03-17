@@ -50,7 +50,6 @@ int isWhiteChar(char);                           /*checks if char is white space
 int isCommentLine(char *line);                   /*returns 1 if its a comment line and 0 if not*/
 int isKeyWord(char *str);                        /*checks if string is a preserved word*/
 int isRegisterNameInRange(char *str);            /*checks if string is of the expression 'r'+0-15 */
-
 int isGoodLabelName(char *str);
 int getIntegerFromText(char *str);      /*get the number from the start of the text*/
 int checkIntegerInText(char *str);      /*checks if there is a number in the start of the text*/
@@ -62,15 +61,9 @@ int isDataLabelDefinition(char *str);   /*checks whether is it a .data def*/
 int isStringLabelDefinition(char *str); /*checks whether is it a .string def*/
 int isMacroStart(char *text);           /*checks if word is macro start*/
 int isMacroEnd(char *text);             /*checks if word is macro end*/
-
-/*to be tested*/
-char *getParam(char *Line);    /*this function returned a trimmed version of the first param in line*/
-char *extractParam(char *str); /*this function removes the first parameter,frees the original string and returns a new one without the param*/
-
-/*int isImmediate(char* str){}
-int isDirect(char* str){}
-int isIndex(char* str){}
-int isRegisterDirect(char* str){}*/
+char *getParam(char *Line);             /*this function returned a trimmed version of the first param in line*/
+char *extractParam(char *str);          /*this function removes the first parameter,frees the original string and returns a new one without the param*/
+int binStringToInt(char *bin_num);
 
 #define TRUE 1
 #define FALSE 0
@@ -93,6 +86,8 @@ int isRegisterDirect(char* str){}*/
 #define EXTERN_WORD ".extern"
 #define SQUARE_BRACKET_LEFT '['
 #define SQUARE_BRACKET_RIGHT ']'
+#define CHAR_ZERO '0'
+#define CHAR_ONE '1'
 #define MAX_INT_SIZE 32767  /*max 16 bit number*/
 #define MIN_INT_SIZE -32768 /*min 16 bit number*/
 

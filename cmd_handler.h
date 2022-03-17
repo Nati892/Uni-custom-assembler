@@ -5,48 +5,37 @@
 #include "Text_parse.h"
 #include "asm_utils.h"
 
-void MOVcountLines(char *str, Assembler_mem *mem);
-void CMPcountLines(char *str, Assembler_mem *mem);
-void ADDcountLines(char *str, Assembler_mem *mem);
-void SUBcountLines(char *str, Assembler_mem *mem);
-void LEAcountLines(char *str, Assembler_mem *mem);
-void CLRcountLines(char *str, Assembler_mem *mem);
-void NOTcountLines(char *str, Assembler_mem *mem);
-void INCcountLines(char *str, Assembler_mem *mem);
-void DECcountLines(char *str, Assembler_mem *mem);
-void JMPcountLines(char *str, Assembler_mem *mem);
-void BNEcountLines(char *str, Assembler_mem *mem);
-void JSRcountLines(char *str, Assembler_mem *mem);
-void REDcountLines(char *str, Assembler_mem *mem);
-void PRNcountLines(char *str, Assembler_mem *mem);
-void RTScountLines(char *str, Assembler_mem *mem);
-void STOPcountLines(char *str, Assembler_mem *mem);
+void MOVcountLines(char *str, Assembler_mem *mem);  /*count lines for mov Instruction*/
+void CMPcountLines(char *str, Assembler_mem *mem);  /*count lines for cmp Instruction*/
+void ADDcountLines(char *str, Assembler_mem *mem);  /*count lines for add Instruction*/
+void SUBcountLines(char *str, Assembler_mem *mem);  /*count lines for sub Instruction*/
+void LEAcountLines(char *str, Assembler_mem *mem);  /*count lines for lea Instruction*/
+void CLRcountLines(char *str, Assembler_mem *mem);  /*count lines for clr Instruction*/
+void NOTcountLines(char *str, Assembler_mem *mem);  /*count lines for not Instruction*/
+void INCcountLines(char *str, Assembler_mem *mem);  /*count lines for inc Instruction*/
+void DECcountLines(char *str, Assembler_mem *mem);  /*count lines for dec Instruction*/
+void JMPcountLines(char *str, Assembler_mem *mem);  /*count lines for jmp Instruction*/
+void BNEcountLines(char *str, Assembler_mem *mem);  /*count lines for bne Instruction*/
+void JSRcountLines(char *str, Assembler_mem *mem);  /*count lines for jsr Instruction*/
+void REDcountLines(char *str, Assembler_mem *mem);  /*count lines for red Instruction*/
+void PRNcountLines(char *str, Assembler_mem *mem);  /*count lines for prn Instruction*/
+void RTScountLines(char *str, Assembler_mem *mem);  /*count lines for rts Instruction*/
+void STOPcountLines(char *str, Assembler_mem *mem); /*count lines for stop Instruction*/
 
-void MOVtranslate(char *str, Assembler_mem *mem);
-void CMPtranslate(char *str, Assembler_mem *mem);
-void ADDtranslate(char *str, Assembler_mem *mem);
-void SUBtranslate(char *str, Assembler_mem *mem);
-void LEAtranslate(char *str, Assembler_mem *mem);
-void CLRtranslate(char *str, Assembler_mem *mem);
-void NOTtranslate(char *str, Assembler_mem *mem);
-void INCtranslate(char *str, Assembler_mem *mem);
-void DECtranslate(char *str, Assembler_mem *mem);
-void JMPtranslate(char *str, Assembler_mem *mem);
-void BNEtranslate(char *str, Assembler_mem *mem);
-void JSRtranslate(char *str, Assembler_mem *mem);
-void REDtranslate(char *str, Assembler_mem *mem);
-void PRNtranslate(char *str, Assembler_mem *mem);
-void RTStranslate(char *str, Assembler_mem *mem);
-void STOPtranslate(char *str, Assembler_mem *mem);
-
-/*to write*/
+/*get param and data and translate line param to binary data lines*/
 char *translateForIndex0(char *param, char *secondline, int reg);
+/*get param and data and translate line param to binary data lines*/
 char *translateForIndex1(char *param, char *secondline, int reg, Assembler_mem *mem);
+/*get param and data and translate line param to binary data lines*/
 char *translateForIndex2(char *param, char *secondline, int reg, Assembler_mem *mem);
+/*get param and data and and add that data to the instruction fields*/
 void translateForIndex3(char *param, char *secondline, int reg);
 
+/*translate comand to binary and add data to mem->String_image*/
 void translateCommand(int command, char *str, Assembler_mem *mem);
+/*returns funct field num for specific command*/
 int getFunct(int command);
+/*returns opcode field num for specific command*/
 int getOpcode(int command);
 
 #define INDEX_TYPE_0_NUM_LINES 1
