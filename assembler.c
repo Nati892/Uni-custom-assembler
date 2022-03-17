@@ -54,9 +54,6 @@ void runAssembler(FILE *file, char *path)
         finalStage(mem);
     }
 
-    printf("\n\n\n translated to->\n%s\n\n<-", mem->String_Image);
-    extLabelsDebug(mem->ext_file_table);
-    printLables(mem->label_Table);
 
     freeAssemblerMem(mem);
 }

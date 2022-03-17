@@ -202,6 +202,8 @@ void createObFile(Assembler_mem *mem)
     char *startOfRow;
     FILE *OB_FILE;
     /*create and fill the .ob file*/
+    if (mem->IC == 100)
+        mem->IC++;
     OB_FILE = CreateFileWithEnding(mem->file_name, FILE_ENDING_OB);
     fseek(OB_FILE, 0, SEEK_SET);
     fprintf(OB_FILE, "%d %d\n", mem->IC - 101, mem->Data_Image_Length); /*write the first line with size data*/
