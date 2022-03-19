@@ -2,7 +2,7 @@
 #define CMD_HANDLER_H
 
 #include <stdio.h>
-#include "Text_parse.h"
+#include "Text_utils.h"
 #include "asm_utils.h"
 
 void MOVcountLines(char *str, Assembler_mem *mem);  /*count lines for mov Instruction*/

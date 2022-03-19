@@ -109,6 +109,7 @@ void killList(node *list)
     }
 }
 
+/*List constructor*/
 node *initList()
 {
     return createNode(NULL, NULL);

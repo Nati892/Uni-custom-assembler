@@ -979,7 +979,7 @@ void translateCommand(int command, char *str, Assembler_mem *mem) /*translate co
     mem->String_Image = appendStringAndFreeBoth(mem->String_Image, command_image);
 }
 
-int getFunct(int command)/*get funct num for instruction*/
+int getFunct(int command) /*get funct num for instruction*/
 {
     int result;
     switch (command)
@@ -1035,7 +1035,7 @@ int getFunct(int command)/*get funct num for instruction*/
     }
     return result;
 }
-int getOpcode(int command)/*get opcode num for instruction*/
+int getOpcode(int command) /*get opcode num for instruction*/
 {
 
     int result = 0;

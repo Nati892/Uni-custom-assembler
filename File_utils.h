@@ -3,11 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Text_parse.h"
+#include "Text_utils.h"
 
-void deleteFileIfExists(char *path);
-FILE *CreateFileWithEnding(char *file_name, char *Ending);
-
+void deleteFileIfExists(char *path);                       /*gets file name, and deletes it if it exists*/
+FILE *CreateFileWithEnding(char *file_name, char *Ending); /*creates a file with the given name and ending*/
 
 #define FILE_ENDING_AS ".as"
 #define FILE_ENDING_AM ".am"

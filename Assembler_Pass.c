@@ -99,7 +99,7 @@ void assemblerFirstPass(FILE *src, Assembler_mem *mem)
         announceSyntaxError("program two long, max legnth is 8092 lines!", mem);
 
     checkEntryLables(mem);  /*make sure there arent any entry lables that are not defined*/
-    checkExternExists(mem); /*make sure there arent any labels used that don't exist */
+    checkUnusedLabels(mem); /*make sure there arent any labels used that don't exist */
 
     if (mem->no_Errors)
     {
@@ -779,7 +779,7 @@ void SpreadCommand(char *str, Assembler_mem *mem)
 }
 
 /*search from used lables, for lables that have not been announced*/
-void checkExternExists(Assembler_mem *mem)
+void checkUnusedLabels(Assembler_mem *mem)
 {
     node *label_name;
     char *trimmedNameToSearch;
@@ -800,7 +800,7 @@ void checkExternExists(Assembler_mem *mem)
     }
 }
 
-/*translate the .data/.string lines into machine code after the Instruction image*/
+
 void translateDataImage(Assembler_mem *mem)
 {
     char *thisLine;

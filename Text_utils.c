@@ -1,4 +1,4 @@
-#include "Text_parse.h"
+#include "Text_utils.h"
 #include <math.h>
 
 /*This function returns the next line,
@@ -149,7 +149,7 @@ char *appendString(char *s1, char *s2)
     new_string[s1_size + s2_size] = END_OF_STRING;
     return new_string;
 }
-
+/*returns a new string with made of the two given strings and frees both the originals*/
 char *appendStringAndFreeBoth(char *s1, char *s2)
 {
     char *temp;
@@ -158,6 +158,7 @@ char *appendStringAndFreeBoth(char *s1, char *s2)
     free(s2);
     return temp;
 }
+/*returns a new string with made of the two given strings and frees the first one*/
 char *appendStringAndFreeFirst(char *s1, char *s2)
 {
     char *temp;
@@ -417,31 +418,6 @@ int isOnlyWhiteChars(char *LinePointer)
         }
     }
     return allwhitechars;
-}
-
-/*this function checks if a line only containes white chars and EOF*/
-int isOnlyEOF(char *LinePointer)
-{
-    int i = 0, Length, onlyEOF = 1;
-    if (LinePointer == NULL)
-    {
-        return 0; /*if line is null then there is no EOF char in it*/
-    }
-
-    Length = strlen(LinePointer);
-    for (i = 0; i < Length - 1; i++)
-    {
-        if (!isspace(LinePointer[i]))
-        {
-            onlyEOF = 0;
-        }
-    }
-    if (LinePointer[Length - 1] != EOF)
-    {
-        onlyEOF = 0;
-    }
-
-    return onlyEOF;
 }
 
 /*This function is like isspace but the new-line char doesnt count as a white character*/

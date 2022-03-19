@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "LinkedList.h"
 #include "File_utils.h"
-#include "Text_parse.h"
+#include "Text_utils.h"
 
 FILE *macroStage(FILE *file, char *file_name);                /*start of macro stage*/
 FILE *createMacroFile(char *file_name);                       /*reaturns a new opend ".am" file*/
