@@ -11,7 +11,7 @@ typedef struct node
     char *key;
     void *data;
     struct node *next;
-} node;
+} node; 
 
 node *initList();                                      /*List constructor*/
 void insertnewnode(node *list, char *key, void *data); /*insert new node to list, only with data*/

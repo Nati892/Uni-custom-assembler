@@ -72,7 +72,7 @@ void setField_dstReg(char *line, int num);                            /*sets des
 void setField_dstIndexMethod(char *line, int num);                    /*sets destination register Index method field of given string*/
 void setField_16bitNum(char *line, int num);                          /*sets a field with a 16 bit number*/
 char *initDataLine();                                                 /*intializes data line with a \n in the end*/
-
+ 
 void saveExternUsedInLine(char *label_name, Assembler_mem *mem); /*whe seeing extern label used then saves it to the mem->_extern_file_table*/
 
 int isIndextype0(char *Param);                     /*checks if recieved param is a of immediate indexing method*/

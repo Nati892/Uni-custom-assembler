@@ -705,7 +705,7 @@ void PRNcountLines(char *str, Assembler_mem *mem)
         mem->no_Errors = FALSE;
 }
 void RTScountLines(char *str, Assembler_mem *mem)
-{
+{ 
     if (str == NULL || isOnlyWhiteChars(str) || checkResidualText(str))
     {
         mem->IC++;

@@ -8,7 +8,7 @@ FILE *macroStage(FILE *file, char *file_name)
 {
     node *LL;
     FILE *am_file;
-    
+     
     LL = initList();
     fseek(file, 0, SEEK_SET);             /*make sure the file stream is at the start*/
     collectMacros(file, LL);              /*search and save macros from source file*/

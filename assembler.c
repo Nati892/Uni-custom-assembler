@@ -36,7 +36,7 @@ void handleFiles(int argc, char **argv)
 
 /*handle file */
 void runAssembler(FILE *file, char *path)
-{
+{ 
 
     Assembler_mem *mem;
     FILE *macro_file;

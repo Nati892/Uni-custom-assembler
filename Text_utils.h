@@ -12,7 +12,7 @@ enum instructions
     MOV = 2,
     CMP,
     ADD,
-    SUB,
+    SUB, 
     LEA,
     CLR,
     NOT,

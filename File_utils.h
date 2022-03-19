@@ -13,4 +13,4 @@ FILE *CreateFileWithEnding(char *file_name, char *Ending); /*creates a file with
 #define FILE_ENDING_OB ".ob"
 #define FILE_ENDING_EXT ".ext"
 #define FILE_ENDING_ENT ".ent"
-#endif
+#endif 

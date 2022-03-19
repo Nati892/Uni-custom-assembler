@@ -22,7 +22,7 @@ void checkEntrySyntax(char *name, char *line, Assembler_mem *mem);  /*handles en
 void reCalcLabels(Assembler_mem *mem);                              /*reclculates correct value for each label in table */
 void checkUnusedLabels(Assembler_mem *mem);                         /*search from used lables, for lables that have not been announced*/
 void translateDataImage(Assembler_mem *mem);                        /*translate the .data/.string lines into machine code after the Instruction image*/
-
+ 
 void createExtFile(Assembler_mem *mem);
 void createEntFile(Assembler_mem *mem);
 void createObFile(Assembler_mem *mem);

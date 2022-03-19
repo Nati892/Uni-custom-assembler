@@ -727,7 +727,7 @@ char *extractParam(char *str)
     for (j = 0; j < (strlen(str) - i); j++)
     {
         new_str[j] = str[i + j];
-    }
+    } 
     free(str);
     return new_str;
 }

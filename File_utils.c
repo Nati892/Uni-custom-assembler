@@ -9,7 +9,7 @@ FILE *CreateFileWithEnding(char *file_name, char *Ending)
     new_file = fopen(new_file_name, "w+"); /*create file with full premission*/
     free(new_file_name);
     return new_file;
-}
+} 
 
 /*this function deletes a file(name given by param) if it exists*/
 void deleteFileIfExists(char *path)

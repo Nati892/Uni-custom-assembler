@@ -193,7 +193,7 @@ void saveExternUsedInLine(char *label_name, Assembler_mem *mem)
 int isIndextype0(char *Param)
 {
     char *trimmedParam = NULL;
-    char *temp;
+    char *temp; 
     int result = FALSE;
     int len = 0;
     if (Param != NULL && !isOnlyWhiteChars(Param))

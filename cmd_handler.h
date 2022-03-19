@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "Text_utils.h"
 #include "asm_utils.h"
-
+ 
 void MOVcountLines(char *str, Assembler_mem *mem);  /*count lines for mov Instruction*/
 void CMPcountLines(char *str, Assembler_mem *mem);  /*count lines for cmp Instruction*/
 void ADDcountLines(char *str, Assembler_mem *mem);  /*count lines for add Instruction*/
