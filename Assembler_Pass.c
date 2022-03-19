@@ -13,7 +13,6 @@ all .data/.string array data is collected
  and all the errors are handled*/
 void assemblerFirstPass(FILE *src, Assembler_mem *mem)
 {
-
     char *curr_Line, *curr_Word;
 
     fseek(src, 0, SEEK_SET); /*set file read point to start*/
@@ -183,12 +182,12 @@ void createEntFile(Assembler_mem *mem)
     ENT_FILE = CreateFileWithEnding(mem->file_name, FILE_ENDING_ENT);
     fseek(ENT_FILE, 0, SEEK_SET);
     ent_List = mem->label_Table;
-    while (ent_List != NULL)/*loop through eall labels*/
+    while (ent_List != NULL) /*loop through eall labels*/
     {
         if (ent_List->key != NULL)
         {
             temp_label = (Label *)ent_List->data;
-            if (temp_label->_attrib_entry == TRUE)/*only output entry labels*/
+            if (temp_label->_attrib_entry == TRUE) /*only output entry labels*/
             {
                 fprintf(ENT_FILE, "%s,%04d,%04d\n", ent_List->key, temp_label->_base_address, temp_label->_offset);
             }
@@ -292,11 +291,14 @@ void handleDataLine(char *str, Assembler_mem *mem)
             {
                 if (!isOnlyWhiteChars(trimmedLine))
                 {
-                    announceSyntaxError("multiple consecutive parameters.", mem);
+                    is_good_data = FALSE;
+
+                    announceSyntaxError("missing comma after number.", mem);
                 }
             }
             else
             {
+                is_good_data = FALSE;
                 announceSyntaxError("multiple consecutive commas.", mem);
             }
         }
@@ -310,12 +312,19 @@ void handleStringLine(char *str, Assembler_mem *mem)
     int i = 0;
     char *trimmedLine = trimAll(str);
 
-    if (trimmedLine[i] != QUOTATION_MARK)
+    if (str == NULL || isOnlyWhiteChars(str))
     {
-        announceSyntaxError("no quotes at start.", mem);
+
+        announceSyntaxError("no input after .string decleration", mem);
         is_good_string = FALSE;
     }
-    else
+
+    if (is_good_string == TRUE && trimmedLine[i] != QUOTATION_MARK)
+    {
+        announceSyntaxError("text should start with a quote", mem);
+        is_good_string = FALSE;
+    }
+    if (is_good_string == TRUE)
     {
         for (i = 1; i < strlen(trimmedLine) - 1 && is_good_string; i++)
         {
@@ -328,7 +337,7 @@ void handleStringLine(char *str, Assembler_mem *mem)
             {
                 if (trimmedLine[i] == QUOTATION_MARK)
                 {
-                    announceSyntaxError("missing quotes in the end.", mem);
+                    announceSyntaxError("extraneous text after \"text\" .", mem);
                     is_good_string = FALSE;
                 }
                 else
@@ -646,7 +655,6 @@ void handleCommand(char *str, Assembler_mem *mem)
 {
     char *param = NULL;
     char *mystr = NULL;
-
     if (str != NULL && !isOnlyWhiteChars(str))
     {
 
@@ -724,8 +732,6 @@ void addToDataImage(int num, Assembler_mem *mem)
     mem->Data_Image[mem->Data_Image_Length - 1] = num;
 }
 
-
-
 /*recalc all the .data/.staring label address*/
 void reCalcLabels(Assembler_mem *mem)
 {
@@ -799,7 +805,6 @@ void checkUnusedLabels(Assembler_mem *mem)
         label_name = label_name->next;
     }
 }
-
 
 void translateDataImage(Assembler_mem *mem)
 {

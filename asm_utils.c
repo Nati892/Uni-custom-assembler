@@ -201,7 +201,7 @@ int isIndextype0(char *Param)
         trimmedParam = trimAll(Param);
         temp = trimmedParam;
         len = strlen(trimmedParam);
-        if (len > 2 && trimmedParam[0] == '#') /*set macro for hash*/
+        if (len >= 2 && trimmedParam[0] == '#') /*set macro for hash*/
         {
             trimmedParam++; /*advance to first digit*/
             if (checkIntegerInText(trimmedParam))

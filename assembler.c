@@ -53,7 +53,11 @@ void runAssembler(FILE *file, char *path)
         assemblerSecondPass(macro_file, mem);
         finalStage(mem);
     }
-
+    else
+    {
+        /*put some space between output of multiple files*/
+        printf("\n\n");
+    }
 
     freeAssemblerMem(mem);
 }
